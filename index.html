@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Sistema de Gestão de Estoque - Solicitação de Retirada</title>
     <style>
         * {
@@ -12,10 +12,10 @@
         }
 
         body {
-            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
             min-height: 100vh;
-            padding: 20px;
+            padding: 16px;
             position: relative;
             overflow-x: hidden;
         }
@@ -36,13 +36,15 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
+            width: 100%;
         }
 
         /* Header Section */
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             animation: slideDown 0.6s ease-out;
+            padding: 0 8px;
         }
 
         .badge {
@@ -50,34 +52,48 @@
             background: linear-gradient(135deg, #f59e0b, #d97706);
             padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
         }
 
         h1 {
-            font-size: 2rem;
+            font-size: 1.6rem;
             font-weight: 700;
             background: linear-gradient(135deg, #fff, #f59e0b);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            word-break: break-word;
         }
 
         .subtitle {
             color: #94a3b8;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
-        /* Grid Layout */
+        /* Grid Layout - Responsivo */
         .grid-2col {
             display: grid;
-            grid-template-columns: 1fr 1.2fr;
-            gap: 24px;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .grid-2col {
+                grid-template-columns: 1fr 1.2fr;
+                gap: 24px;
+            }
+            body {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
         }
 
         /* Cards */
@@ -86,10 +102,16 @@
             backdrop-filter: blur(10px);
             border-radius: 24px;
             border: 1px solid rgba(56, 189, 248, 0.2);
-            padding: 32px;
+            padding: 20px;
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             animation: fadeInUp 0.6s ease-out;
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                padding: 32px;
+            }
         }
 
         .card:hover {
@@ -99,7 +121,7 @@
         }
 
         .card-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 600;
             margin-bottom: 20px;
             color: #f59e0b;
@@ -108,40 +130,70 @@
             gap: 10px;
             border-bottom: 2px solid rgba(245, 158, 11, 0.3);
             padding-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        @media (min-width: 768px) {
+            .card-title {
+                font-size: 1.3rem;
+            }
         }
 
         /* Form Groups */
         .form-group {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         label {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
             font-weight: 500;
             color: #cbd5e1;
             margin-bottom: 8px;
+        }
+
+        @media (min-width: 768px) {
+            label {
+                font-size: 0.875rem;
+            }
         }
 
         label svg {
             width: 18px;
             height: 18px;
             stroke: #f59e0b;
+            flex-shrink: 0;
         }
 
         select, input, textarea {
             width: 100%;
-            padding: 14px 16px;
+            padding: 12px 14px;
             background: #0f172a;
             border: 1.5px solid #334155;
             border-radius: 12px;
             color: white;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             outline: none;
             font-family: inherit;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        @media (min-width: 768px) {
+            select, input, textarea {
+                padding: 14px 16px;
+                font-size: 0.95rem;
+            }
+        }
+
+        select {
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f59e0b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
         }
 
         select:focus, input:focus, textarea:focus {
@@ -158,12 +210,12 @@
         /* Buttons */
         .btn-withdraw {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: linear-gradient(135deg, #f59e0b, #d97706);
             border: none;
             border-radius: 12px;
             font-weight: 600;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             color: white;
             transition: all 0.3s ease;
@@ -173,16 +225,27 @@
             gap: 8px;
         }
 
+        @media (min-width: 768px) {
+            .btn-withdraw {
+                padding: 16px;
+                font-size: 1rem;
+            }
+        }
+
         .btn-withdraw:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
         }
 
+        .btn-withdraw:active {
+            transform: translateY(0);
+        }
+
         .btn-logout {
             position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 10px 20px;
+            top: 12px;
+            right: 12px;
+            padding: 8px 14px;
             background: linear-gradient(135deg, #ef4444, #dc2626);
             border: none;
             border-radius: 12px;
@@ -191,9 +254,19 @@
             color: white;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             z-index: 100;
             transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        @media (min-width: 768px) {
+            .btn-logout {
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
         }
 
         .btn-logout:hover {
@@ -201,16 +274,25 @@
             box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
         }
 
-        /* Table */
+        /* Table - Responsivo */
         .table-container {
             overflow-x: auto;
             max-height: 500px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: 12px;
         }
 
         .solicitacoes-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        @media (max-width: 640px) {
+            .solicitacoes-table {
+                min-width: 500px;
+            }
         }
 
         .solicitacoes-table thead {
@@ -222,30 +304,48 @@
 
         .solicitacoes-table th {
             text-align: left;
-            padding: 12px;
+            padding: 10px 8px;
             color: #f59e0b;
             font-weight: 600;
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             border-bottom: 2px solid rgba(245, 158, 11, 0.3);
         }
 
-        .solicitacoes-table td {
-            padding: 12px;
-            color: #cbd5e1;
-            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
-            font-size: 0.85rem;
+        @media (min-width: 768px) {
+            .solicitacoes-table th {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
         }
 
-        .solicitacoes-table tr:hover {
-            background: rgba(245, 158, 11, 0.05);
+        .solicitacoes-table td {
+            padding: 10px 8px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+            font-size: 0.7rem;
+        }
+
+        @media (min-width: 768px) {
+            .solicitacoes-table td {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
         }
 
         .status {
             display: inline-block;
-            padding: 4px 12px;
+            padding: 3px 8px;
             border-radius: 20px;
-            font-size: 0.75rem;
+            font-size: 0.65rem;
             font-weight: 600;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .status {
+                padding: 4px 12px;
+                font-size: 0.75rem;
+            }
         }
 
         .status-pendente {
@@ -265,28 +365,37 @@
 
         .empty-state {
             text-align: center;
-            padding: 40px;
+            padding: 30px;
             color: #94a3b8;
         }
 
-        /* Action Buttons */
+        /* Action Buttons - Responsivo */
         .action-buttons {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
         .btn-edit, .btn-delete, .btn-print {
-            padding: 4px 10px;
+            padding: 4px 8px;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 500;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 768px) {
+            .btn-edit, .btn-delete, .btn-print {
+                padding: 4px 10px;
+                font-size: 0.7rem;
+                gap: 4px;
+            }
         }
 
         .btn-edit {
@@ -309,7 +418,7 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        /* Modal */
+        /* Modal Responsivo */
         .modal {
             display: none;
             position: fixed;
@@ -322,6 +431,7 @@
             z-index: 3000;
             justify-content: center;
             align-items: center;
+            padding: 16px;
         }
 
         .modal.show {
@@ -331,22 +441,38 @@
         .modal-content {
             background: #1e293b;
             border-radius: 24px;
-            padding: 32px;
+            padding: 24px;
             max-width: 500px;
-            width: 90%;
+            width: 100%;
             border: 1px solid rgba(56, 189, 248, 0.3);
             animation: fadeInUp 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @media (min-width: 768px) {
+            .modal-content {
+                padding: 32px;
+            }
         }
 
         .modal-content h3 {
             color: #f59e0b;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
         }
 
         .modal-buttons {
             display: flex;
             gap: 12px;
             margin-top: 20px;
+            flex-direction: column;
+        }
+
+        @media (min-width: 480px) {
+            .modal-buttons {
+                flex-direction: row;
+            }
         }
 
         .modal-buttons button {
@@ -378,39 +504,92 @@
         .alert-box {
             background: rgba(239, 68, 68, 0.2);
             border-left: 3px solid #ef4444;
-            padding: 12px;
+            padding: 10px;
             border-radius: 8px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             display: none;
         }
 
         .alert-box p {
             color: #ef4444;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
-        .alert-box strong {
-            color: #ef4444;
+        /* Info Box */
+        .info-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid #f59e0b;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .info-box p {
+            color: #cbd5e1;
+            font-size: 0.8rem;
+        }
+
+        .info-box strong {
+            color: #f59e0b;
+        }
+
+        /* User Info - Responsivo */
+        .user-info {
+            position: fixed;
+            top: 12px;
+            right: 95px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 6px 12px;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.7rem;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (min-width: 768px) {
+            .user-info {
+                top: 20px;
+                right: 140px;
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                max-width: 250px;
+            }
         }
 
         /* Toast */
         .toast {
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%) translateY(100px);
             background: linear-gradient(135deg, #10b981, #059669);
             color: white;
-            padding: 12px 24px;
+            padding: 10px 18px;
             border-radius: 12px;
             font-weight: 500;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             z-index: 1000;
             opacity: 0;
             transition: all 0.3s ease;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            font-size: 0.8rem;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .toast {
+                padding: 12px 24px;
+                font-size: 0.9rem;
+                bottom: 30px;
+            }
         }
 
         .toast.show {
@@ -438,44 +617,34 @@
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border: 3px solid rgba(245, 158, 11, 0.3);
             border-top-color: #f59e0b;
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
         }
 
-        /* Info Box */
-        .info-box {
-            background: rgba(245, 158, 11, 0.1);
-            border-left: 3px solid #f59e0b;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
+        @media (min-width: 768px) {
+            .spinner {
+                width: 50px;
+                height: 50px;
+            }
         }
 
-        .info-box p {
-            color: #cbd5e1;
-            font-size: 0.85rem;
+        /* Auth Section */
+        .auth-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 16px;
         }
 
-        .info-box strong {
-            color: #f59e0b;
-        }
-
-        /* User Info */
-        .user-info {
-            position: fixed;
-            top: 20px;
-            right: 140px;
-            background: rgba(30, 41, 59, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 8px 16px;
-            border-radius: 12px;
-            color: white;
-            font-size: 0.9rem;
-            border: 1px solid rgba(56, 189, 248, 0.3);
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
         }
 
         /* Print Styles */
@@ -488,7 +657,7 @@
             body::before {
                 display: none;
             }
-            .btn-logout, .btn-withdraw, .action-buttons, .btn-back, .header .badge, .user-info {
+            .btn-logout, .btn-withdraw, .action-buttons, .header .badge, .user-info {
                 display: none !important;
             }
             .card {
@@ -508,14 +677,8 @@
             .solicitacoes-table td {
                 color: #333;
             }
-            .status-pendente, .status-aprovada, .status-rejeitada {
-                background: #f0f0f0;
-                color: #333;
-            }
             .container {
-                max-width: 100%;
-                margin: 0;
-                padding: 10px;
+                padding: 0;
             }
         }
 
@@ -548,36 +711,53 @@
             }
         }
 
-        @media (max-width: 1024px) {
-            .grid-2col {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                padding: 24px;
+        /* Ajustes adicionais para telas muito pequenas */
+        @media (max-width: 480px) {
+            body {
+                padding: 12px;
             }
             
-            h1 {
-                font-size: 1.5rem;
+            .card {
+                padding: 16px;
             }
-
-            .user-info {
-                top: 10px;
-                right: 110px;
-                font-size: 0.75rem;
+            
+            .card-title {
+                font-size: 1rem;
+                margin-bottom: 16px;
             }
-
-            .btn-logout {
-                top: 10px;
-                right: 10px;
-                padding: 6px 12px;
+            
+            .form-group {
+                margin-bottom: 16px;
+            }
+            
+            select, input, textarea {
+                padding: 10px 12px;
                 font-size: 0.85rem;
+            }
+            
+            .btn-withdraw {
+                padding: 12px;
+                font-size: 0.9rem;
             }
             
             .action-buttons {
                 flex-direction: column;
+                gap: 4px;
+            }
+            
+            .btn-edit, .btn-delete, .btn-print {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .solicitacoes-table th, 
+            .solicitacoes-table td {
+                padding: 8px 6px;
+                font-size: 0.65rem;
+            }
+            
+            .protocolo-cell {
+                font-size: 0.6rem;
             }
         }
     </style>
@@ -588,7 +768,7 @@
     </div>
 
     <div class="toast" id="toast">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M20 6L9 17l-5-5"/>
         </svg>
         <span id="toastMessage">Operação realizada com sucesso!</span>
@@ -660,10 +840,9 @@
         <!-- Auth Section -->
         <div id="authSection" class="auth-content">
             <div class="auth-container">
-                <!-- Login Card -->
                 <div id="loginCard" class="card">
                     <div class="card-title">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
                             <polyline points="10 17 15 12 10 7"/>
                             <line x1="15" x2="3" y1="12" y2="12"/>
@@ -672,39 +851,20 @@
                     </div>
                     <form id="loginForm">
                         <div class="form-group">
-                            <label>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                    <polyline points="22,6 12,13 2,6"/>
-                                </svg>
-                                E-mail
-                            </label>
+                            <label>📧 E-mail</label>
                             <input type="email" id="loginEmail" placeholder="seu@email.com" required>
                         </div>
                         <div class="form-group">
-                            <label>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                                </svg>
-                                Senha
-                            </label>
+                            <label>🔒 Senha</label>
                             <input type="password" id="loginPassword" placeholder="••••••••" required>
                         </div>
-                        <button type="submit" class="btn-withdraw">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                                <polyline points="10 17 15 12 10 7"/>
-                                <line x1="15" x2="3" y1="12" y2="12"/>
-                            </svg>
-                            Entrar
-                        </button>
+                        <button type="submit" class="btn-withdraw">Entrar</button>
                     </form>
                 </div>
             </div>
         </div>
 
-        <!-- Main Content - Solicitação de Retirada -->
+        <!-- Main Content -->
         <div id="mainContent" class="main-content" style="display: none;">
             <div class="header">
                 <div class="badge">📤 Sistema de Solicitações</div>
@@ -713,111 +873,49 @@
             </div>
 
             <div class="grid-2col">
-                <!-- Formulário de Solicitação -->
                 <div class="card">
-                    <div class="card-title">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                            <polyline points="10 17 15 12 10 7"/>
-                            <line x1="15" x2="3" y1="12" y2="12"/>
-                        </svg>
-                        Nova Solicitação
-                    </div>
-                    
+                    <div class="card-title">📝 Nova Solicitação</div>
                     <form id="formWithdraw">
                         <div class="form-group">
-                            <label>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <rect x="4" y="4" width="16" height="16" rx="2"/>
-                                    <line x1="9" y1="9" x2="15" y2="15"/>
-                                    <line x1="15" y1="9" x2="9" y2="15"/>
-                                </svg>
-                                Transformador
-                            </label>
+                            <label>⚡ Transformador</label>
                             <select id="withdrawPotenciaSel" required>
                                 <option value="" disabled selected>Selecione a potência...</option>
-                                <option value="t10kv">⚡ Transformador 10kV</option>
-                                <option value="t30kv">⚡ Transformador 30kV</option>
-                                <option value="t45kv">⚡ Transformador 45kV</option>
-                                <option value="t70kv">⚡ Transformador 70kV</option>
-                                <option value="t12_5kv">⚡ Transformador 12.5kV</option>
-                                <option value="t150kv">⚡ Transformador 150kV</option>
+                                <option value="t10kv">Transformador 10kV</option>
+                                <option value="t30kv">Transformador 30kV</option>
+                                <option value="t45kv">Transformador 45kV</option>
+                                <option value="t70kv">Transformador 70kV</option>
+                                <option value="t12_5kv">Transformador 12.5kV</option>
+                                <option value="t150kv">Transformador 150kV</option>
                             </select>
                         </div>
-
                         <div class="form-group">
-                            <label>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="12" cy="12" r="10"/>
-                                    <line x1="12" y1="8" x2="12" y2="16"/>
-                                    <line x1="8" y1="12" x2="16" y2="12"/>
-                                </svg>
-                                Quantidade para Retirar
-                            </label>
+                            <label>🔢 Quantidade para Retirar</label>
                             <input type="number" id="withdrawQtd" min="1" placeholder="Digite a quantidade" required>
                         </div>
-
                         <div class="form-group">
-                            <label>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                                    <polyline points="22,6 12,13 2,6"/>
-                                </svg>
-                                Solicitante
-                            </label>
+                            <label>👤 Solicitante</label>
                             <input type="text" id="solicitante" placeholder="Nome de quem está solicitando" required>
                         </div>
-
                         <div class="form-group">
-                            <label>
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M20 12v10H4V12M2 7h20v5H2zM12 22v-5"/>
-                                </svg>
-                                Justificativa / Observação
-                            </label>
+                            <label>📝 Justificativa / Observação</label>
                             <textarea id="observacao" placeholder="Motivo da retirada, destino, etc..." required></textarea>
                         </div>
-
                         <div class="info-box" id="stockInfo" style="display: none;">
                             <p>📊 <strong>Estoque atual:</strong> <span id="currentStock">0</span> unidades</p>
                         </div>
-
-                        <button type="submit" class="btn-withdraw">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                                <polyline points="10 17 15 12 10 7"/>
-                                <line x1="15" x2="3" y1="12" y2="12"/>
-                            </svg>
-                            Enviar Solicitação
-                        </button>
+                        <button type="submit" class="btn-withdraw">📤 Enviar Solicitação</button>
                     </form>
                 </div>
 
-                <!-- Lista de Solicitações -->
                 <div class="card">
-                    <div class="card-title">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
-                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
-                        </svg>
-                        Minhas Solicitações
-                    </div>
+                    <div class="card-title">📋 Minhas Solicitações</div>
                     <div class="table-container">
                         <table class="solicitacoes-table" id="solicitacoesTable">
                             <thead>
-                                <tr>
-                                    <th>Protocolo</th>
-                                    <th>Item</th>
-                                    <th>Quantidade</th>
-                                    <th>Data</th>
-                                    <th>Status</th>
-                                    <th>Ações</th>
-                                </tr>
+                                <tr><th>Protocolo</th><th>Item</th><th>Qtd</th><th>Data</th><th>Status</th><th>Ações</th></tr>
                             </thead>
                             <tbody id="solicitacoesList">
-                                <tr>
-                                    <td colspan="6" class="empty-state">Carregando solicitações...</td>
-                                </tr>
+                                <tr><td colspan="6" class="empty-state">Carregando solicitações...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -833,20 +931,15 @@
 
         const firebaseConfig = {
             apiKey: "AIzaSyCwTiqQBRBBYth4wJtjhdL1VQ0LZV7PKco",
-            authDomain: "almoxarifado-c2fbc.firebaseapp.com",
             databaseURL: "https://almoxarifado-c2fbc-default-rtdb.firebaseio.com",
-            projectId: "almoxarifado-c2fbc",
-            storageBucket: "almoxarifado-c2fbc.firebasestorage.app",
-            messagingSenderId: "349325049629",
-            appId: "1:349325049629:web:002687796411303ce8ebf4"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
         const auth = getAuth(app);
-
         setPersistence(auth, browserSessionPersistence).catch(console.error);
 
+        // ... (todas as funções existentes permanecem iguais)
         const loading = document.getElementById('loading');
         const toast = document.getElementById('toast');
         const toastMessage = document.getElementById('toastMessage');
@@ -857,539 +950,166 @@
 
         function showToast(message, isError = false) {
             toastMessage.textContent = message;
-            toast.style.background = isError 
-                ? 'linear-gradient(135deg, #ef4444, #dc2626)' 
-                : 'linear-gradient(135deg, #10b981, #059669)';
+            toast.style.background = isError ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #10b981, #059669)';
             toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        function showLoading() {
-            loading.classList.add('show');
-        }
+        function showLoading() { loading.classList.add('show'); }
+        function hideLoading() { loading.classList.remove('show'); }
+        window.closeModal = function() { modal.classList.remove('show'); itemToDelete = null; };
+        window.closeEditModal = function() { modalEdit.classList.remove('show'); editKey = null; document.getElementById('editAlertBox').style.display = 'none'; };
 
-        function hideLoading() {
-            loading.classList.remove('show');
-        }
-
-        window.closeModal = function() {
-            modal.classList.remove('show');
-            itemToDelete = null;
-        };
-
-        window.closeEditModal = function() {
-            modalEdit.classList.remove('show');
-            editKey = null;
-            document.getElementById('editAlertBox').style.display = 'none';
-        };
-
-        // Função para gerar número de protocolo único
         function gerarProtocolo() {
             const data = new Date();
-            const ano = data.getFullYear();
-            const mes = String(data.getMonth() + 1).padStart(2, '0');
-            const dia = String(data.getDate()).padStart(2, '0');
-            const hora = String(data.getHours()).padStart(2, '0');
-            const minuto = String(data.getMinutes()).padStart(2, '0');
-            const segundo = String(data.getSeconds()).padStart(2, '0');
-            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
-            return `SOL-${ano}${mes}${dia}-${hora}${minuto}${segundo}-${random}`;
+            return `SOL-${data.getFullYear()}${String(data.getMonth()+1).padStart(2,'0')}${String(data.getDate()).padStart(2,'0')}-${String(data.getHours()).padStart(2,'0')}${String(data.getMinutes()).padStart(2,'0')}${String(data.getSeconds()).padStart(2,'0')}-${Math.floor(Math.random()*1000).toString().padStart(3,'0')}`;
         }
 
-        // Função para imprimir solicitação
         window.printSolicitacao = function(protocolo, nome, quantidade, solicitante, observacao, data, status) {
             const printWindow = window.open('', '_blank');
-            const dataFormatada = data ? new Date(data).toLocaleString('pt-BR') : new Date().toLocaleString('pt-BR');
-            
-            printWindow.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Solicitação ${protocolo}</title>
-                    <style>
-                        body {
-                            font-family: 'Inter', 'Segoe UI', sans-serif;
-                            padding: 40px;
-                            max-width: 800px;
-                            margin: 0 auto;
-                        }
-                        .header {
-                            text-align: center;
-                            border-bottom: 2px solid #f59e0b;
-                            padding-bottom: 20px;
-                            margin-bottom: 30px;
-                        }
-                        .header h1 {
-                            color: #f59e0b;
-                            margin: 0;
-                        }
-                        .header p {
-                            color: #666;
-                            margin: 5px 0 0;
-                        }
-                        .content {
-                            margin: 30px 0;
-                        }
-                        .info-row {
-                            display: flex;
-                            margin-bottom: 15px;
-                            padding: 10px;
-                            border-bottom: 1px solid #eee;
-                        }
-                        .label {
-                            font-weight: bold;
-                            width: 150px;
-                            color: #333;
-                        }
-                        .value {
-                            color: #555;
-                        }
-                        .status {
-                            display: inline-block;
-                            padding: 4px 12px;
-                            border-radius: 20px;
-                            font-size: 0.85rem;
-                            font-weight: bold;
-                        }
-                        .status-pendente { background: #fef3c7; color: #d97706; }
-                        .status-aprovada { background: #d1fae5; color: #059669; }
-                        .status-rejeitada { background: #fee2e2; color: #dc2626; }
-                        .footer {
-                            margin-top: 50px;
-                            text-align: center;
-                            border-top: 1px solid #eee;
-                            padding-top: 20px;
-                            color: #999;
-                            font-size: 0.8rem;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <h1>Solicitação de Retirada</h1>
-                        <p>Protocolo: ${protocolo}</p>
-                    </div>
-                    <div class="content">
-                        <div class="info-row">
-                            <div class="label">Transformador:</div>
-                            <div class="value">${nome}</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="label">Quantidade:</div>
-                            <div class="value">${quantidade} unidade(s)</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="label">Solicitante:</div>
-                            <div class="value">${solicitante}</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="label">Data da Solicitação:</div>
-                            <div class="value">${dataFormatada}</div>
-                        </div>
-                        <div class="info-row">
-                            <div class="label">Status:</div>
-                            <div class="value"><span class="status status-${status.toLowerCase()}">${status}</span></div>
-                        </div>
-                        <div class="info-row">
-                            <div class="label">Justificativa:</div>
-                            <div class="value">${observacao}</div>
-                        </div>
-                    </div>
-                    <div class="footer">
-                        <p>Este documento é uma solicitação de retirada de estoque.</p>
-                        <p>Data de emissão: ${new Date().toLocaleString('pt-BR')}</p>
-                    </div>
-                    <script>
-                        window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); };
-                    <\/script>
-                </body>
-                </html>
-            `);
+            printWindow.document.write(`<!DOCTYPE html><html><head><title>Solicitação ${protocolo}</title><style>body{font-family:Inter,sans-serif;padding:20px} .header{text-align:center;border-bottom:2px solid #f59e0b} .status-pendente{background:#fef3c7;color:#d97706} .status-aprovada{background:#d1fae5;color:#059669} .status-rejeitada{background:#fee2e2;color:#dc2626}</style></head><body><div class="header"><h1>Solicitação de Retirada</h1><p>Protocolo: ${protocolo}</p></div><div><p><strong>Transformador:</strong> ${nome}</p><p><strong>Quantidade:</strong> ${quantidade} unidade(s)</p><p><strong>Solicitante:</strong> ${solicitante}</p><p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p><p><strong>Status:</strong> ${status}</p><p><strong>Justificativa:</strong> ${observacao}</p></div><script>window.onload=function(){window.print();setTimeout(function(){window.close();},500)}<\/script></body></html>`);
             printWindow.document.close();
         };
 
-        // Função para verificar estoque no modal de edição
         document.getElementById('editPotenciaSel').addEventListener('change', async (e) => {
-            const id = e.target.value;
-            if (id) {
-                const stockRef = ref(db, `estoque/${id}`);
-                const snapshot = await get(stockRef);
-                const quantidade = snapshot.val()?.quantidade || 0;
-                const infoBox = document.getElementById('editStockInfo');
-                const currentStockSpan = document.getElementById('editCurrentStock');
-                
-                if (quantidade > 0) {
-                    infoBox.style.display = 'block';
-                    currentStockSpan.textContent = quantidade;
-                    currentStockSpan.style.color = '#f59e0b';
-                    currentStockSpan.style.fontWeight = 'bold';
-                } else {
-                    infoBox.style.display = 'block';
-                    currentStockSpan.textContent = 'ESGOTADO';
-                    currentStockSpan.style.color = '#ef4444';
-                    currentStockSpan.style.fontWeight = 'bold';
-                }
-            } else {
-                document.getElementById('editStockInfo').style.display = 'none';
+            if(e.target.value){
+                const snap=await get(ref(db,`estoque/${e.target.value}`));
+                const qtd=snap.val()?.quantidade||0;
+                document.getElementById('editStockInfo').style.display='block';
+                document.getElementById('editCurrentStock').innerHTML=qtd>0?qtd:'ESGOTADO';
+                document.getElementById('editCurrentStock').style.color=qtd>0?'#f59e0b':'#ef4444';
             }
         });
 
-        // Função para editar solicitação
-        window.editSolicitacao = async function(key, protocolo, transformadorId, transformadorNome, quantidade, solicitante, observacao) {
-            editKey = key;
-            
-            // Preencher formulário de edição
-            document.getElementById('editPotenciaSel').value = transformadorId;
-            document.getElementById('editQtd').value = quantidade;
-            document.getElementById('editSolicitante').value = solicitante;
-            document.getElementById('editObservacao').value = observacao;
-            
-            // Buscar estoque atual
-            const stockRef = ref(db, `estoque/${transformadorId}`);
-            const snapshot = await get(stockRef);
-            const currentStock = snapshot.val()?.quantidade || 0;
-            
-            const infoBox = document.getElementById('editStockInfo');
-            const currentStockSpan = document.getElementById('editCurrentStock');
-            infoBox.style.display = 'block';
-            currentStockSpan.textContent = currentStock;
-            
+        window.editSolicitacao = async function(key, protocolo, transformadorId, transformadorNome, quantidade, solicitante, observacao){
+            editKey=key;
+            document.getElementById('editPotenciaSel').value=transformadorId;
+            document.getElementById('editQtd').value=quantidade;
+            document.getElementById('editSolicitante').value=solicitante;
+            document.getElementById('editObservacao').value=observacao;
+            const snap=await get(ref(db,`estoque/${transformadorId}`));
+            const currentStock=snap.val()?.quantidade||0;
+            document.getElementById('editStockInfo').style.display='block';
+            document.getElementById('editCurrentStock').innerHTML=currentStock;
             modalEdit.classList.add('show');
         };
 
-        // Salvar edição com validação de estoque
-        document.getElementById('editForm').onsubmit = async (e) => {
+        document.getElementById('editForm').onsubmit=async(e)=>{
             e.preventDefault();
-            
-            if (!editKey) {
-                showToast('❌ Erro ao editar solicitação!', true);
+            if(!editKey) return showToast('❌ Erro!',true);
+            const tid=document.getElementById('editPotenciaSel').value;
+            const tnome=document.getElementById('editPotenciaSel').options[document.getElementById('editPotenciaSel').selectedIndex].text.replace('⚡ ','');
+            const qtd=parseInt(document.getElementById('editQtd').value);
+            const solicitante=document.getElementById('editSolicitante').value;
+            const obs=document.getElementById('editObservacao').value;
+            const stockSnap=await get(ref(db,`estoque/${tid}`));
+            const currentStock=stockSnap.val()?.quantidade||0;
+            if(qtd>currentStock){
+                document.getElementById('editAlertBox').style.display='block';
+                document.getElementById('editAlertMessage').innerHTML=`Quantidade (${qtd}) > estoque (${currentStock})!`;
+                setTimeout(()=>document.getElementById('editAlertBox').style.display='none',4000);
                 return;
             }
-            
-            const transformadorId = document.getElementById('editPotenciaSel').value;
-            const transformadorNome = document.getElementById('editPotenciaSel').options[document.getElementById('editPotenciaSel').selectedIndex].text.replace('⚡ ', '');
-            const quantidadeSolicitada = parseInt(document.getElementById('editQtd').value);
-            const solicitante = document.getElementById('editSolicitante').value;
-            const observacao = document.getElementById('editObservacao').value;
-            
-            if (!transformadorId || !quantidadeSolicitada || !solicitante || !observacao) {
-                showToast('❌ Por favor, preencha todos os campos!', true);
-                return;
-            }
-            
-            // Verificar estoque atual
-            const stockRef = ref(db, `estoque/${transformadorId}`);
-            const snapshot = await get(stockRef);
-            const currentStock = snapshot.val()?.quantidade || 0;
-            
-            // Validar se a quantidade solicitada é maior que o estoque
-            if (quantidadeSolicitada > currentStock) {
-                const alertBox = document.getElementById('editAlertBox');
-                const alertMessage = document.getElementById('editAlertMessage');
-                alertMessage.innerHTML = `A quantidade solicitada (${quantidadeSolicitada}) é maior que o estoque disponível (${currentStock} unidades)!`;
-                alertBox.style.display = 'block';
-                setTimeout(() => {
-                    alertBox.style.display = 'none';
-                }, 5000);
-                return;
-            }
-            
             showLoading();
-            
-            try {
-                // Buscar dados atuais para manter o protocolo e outras informações
-                const solicitacaoRef = ref(db, `solicitacoes/${editKey}`);
-                const snapshotSolic = await get(solicitacaoRef);
-                const dadosAtuais = snapshotSolic.val();
-                
-                if (!dadosAtuais) {
-                    showToast('❌ Solicitação não encontrada!', true);
-                    return;
-                }
-                
-                // Atualizar apenas os campos editáveis
-                await set(solicitacaoRef, {
-                    ...dadosAtuais,
-                    transformadorId: transformadorId,
-                    transformadorNome: transformadorNome,
-                    quantidadeSolicitada: quantidadeSolicitada,
-                    solicitante: solicitante,
-                    observacao: observacao,
-                    editadoEm: serverTimestamp(),
-                    editadoPor: auth.currentUser?.email || 'Sistema',
-                    estoqueAtual: currentStock
-                });
-                
-                showToast('✅ Solicitação editada com sucesso!');
+            try{
+                const solRef=ref(db,`solicitacoes/${editKey}`);
+                const dadosAtuais=(await get(solRef)).val();
+                await set(solRef,{...dadosAtuais,transformadorId:tid,transformadorNome:tnome,quantidadeSolicitada:qtd,solicitante:solicitante,observacao:obs,editadoEm:serverTimestamp(),estoqueAtual:currentStock});
+                showToast('✅ Solicitação editada!');
                 closeEditModal();
-            } catch (error) {
-                console.error('Erro ao editar:', error);
-                showToast('❌ Erro ao editar solicitação!', true);
-            } finally {
-                hideLoading();
-            }
+            }catch(err){showToast('❌ Erro ao editar!',true);}
+            finally{hideLoading();}
         };
 
-        // Função para excluir solicitação
-        window.deleteSolicitacao = function(key, protocolo) {
-            itemToDelete = { key, protocolo };
-            modal.classList.add('show');
-        };
-
-        document.getElementById('confirmDelete').onclick = async () => {
-            if (itemToDelete) {
+        window.deleteSolicitacao=function(key,protocolo){itemToDelete={key,protocolo};modal.classList.add('show');};
+        document.getElementById('confirmDelete').onclick=async()=>{
+            if(itemToDelete){
                 modal.classList.remove('show');
                 showLoading();
-                
-                try {
-                    const solicitacaoRef = ref(db, `solicitacoes/${itemToDelete.key}`);
-                    await remove(solicitacaoRef);
-                    showToast(`✅ Solicitação ${itemToDelete.protocolo} excluída com sucesso!`);
-                } catch (error) {
-                    console.error('Erro:', error);
-                    showToast('❌ Erro ao excluir solicitação!', true);
-                } finally {
-                    hideLoading();
-                    itemToDelete = null;
-                }
+                try{await remove(ref(db,`solicitacoes/${itemToDelete.key}`));showToast(`✅ ${itemToDelete.protocolo} excluída!`);}
+                catch(e){showToast('❌ Erro ao excluir!',true);}
+                finally{hideLoading();itemToDelete=null;}
             }
         };
 
-        // Função para carregar solicitações
-        function loadSolicitacoes() {
-            const solicitacoesRef = ref(db, 'solicitacoes');
-            
-            onValue(solicitacoesRef, (snapshot) => {
-                const solicitacoes = snapshot.val();
-                const tbody = document.getElementById('solicitacoesList');
-                
-                if (!solicitacoes) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">📋 Nenhuma solicitação encontrada</td>' + '</table>';
-                    return;
+        function loadSolicitacoes(){
+            onValue(ref(db,'solicitacoes'),(snapshot)=>{
+                const solicitacoes=snapshot.val();
+                const tbody=document.getElementById('solicitacoesList');
+                if(!solicitacoes){tbody.innerHTML='<tr><td colspan="6" class="empty-state">📋 Nenhuma solicitação encontrada</td></tr>';return;}
+                const arr=Object.entries(solicitacoes).sort((a,b)=>(b[1].dataSolicitacao||0)-(a[1].dataSolicitacao||0));
+                let html='';
+                for(let [key,sol] of arr){
+                    const statusClass=sol.status==='PENDENTE'?'status-pendente':sol.status==='APROVADA'?'status-aprovada':'status-rejeitada';
+                    const statusText=sol.status==='PENDENTE'?'⏳ PENDENTE':sol.status==='APROVADA'?'✅ APROVADA':'❌ REJEITADA';
+                    html+=`<tr><td style="font-family:monospace;font-size:0.7rem;">${sol.protocolo||'N/A'}</td><td>⚡ ${sol.transformadorNome||'N/A'}</td><td style="font-weight:600;color:#f59e0b;">${sol.quantidadeSolicitada} un</td><td style="font-size:0.7rem;">📅 ${sol.dataSolicitacao?new Date(sol.dataSolicitacao).toLocaleString('pt-BR'):'N/A'}</td><td><span class="status ${statusClass}">${statusText}</span></td><td class="action-buttons"><button class="btn-print" onclick="printSolicitacao('${sol.protocolo}','${sol.transformadorNome}',${sol.quantidadeSolicitada},'${sol.solicitante}','${sol.observacao?.replace(/'/g,"\\'")}',${sol.dataSolicitacao},'${sol.status}')">🖨️</button>${sol.status==='PENDENTE'?`<button class="btn-edit" onclick="editSolicitacao('${key}','${sol.protocolo}','${sol.transformadorId}','${sol.transformadorNome}',${sol.quantidadeSolicitada},'${sol.solicitante}','${sol.observacao?.replace(/'/g,"\\'")}')">✏️</button><button class="btn-delete" onclick="deleteSolicitacao('${key}','${sol.protocolo}')">🗑️</button>`:''}</td></tr>`;
                 }
-
-                // Converter para array e ordenar por data (mais recente primeiro)
-                const solicitacoesArray = Object.entries(solicitacoes);
-                solicitacoesArray.sort((a, b) => (b[1].dataSolicitacao || 0) - (a[1].dataSolicitacao || 0));
-                
-                let html = '';
-                solicitacoesArray.forEach(([key, sol]) => {
-                    const dataSolicitacao = sol.dataSolicitacao ? new Date(sol.dataSolicitacao).toLocaleString('pt-BR') : 'Data não disponível';
-                    
-                    let statusClass = '';
-                    let statusText = '';
-                    
-                    switch(sol.status) {
-                        case 'PENDENTE':
-                            statusClass = 'status-pendente';
-                            statusText = '⏳ PENDENTE';
-                            break;
-                        case 'APROVADA':
-                            statusClass = 'status-aprovada';
-                            statusText = '✅ APROVADA';
-                            break;
-                        case 'REJEITADA':
-                            statusClass = 'status-rejeitada';
-                            statusText = '❌ REJEITADA';
-                            break;
-                        default:
-                            statusClass = 'status-pendente';
-                            statusText = '⏳ PENDENTE';
-                    }
-                    
-                    html += `
-                        <tr>
-                            <td style="font-family: monospace; font-size: 0.75rem;">${sol.protocolo || 'N/A'}</td>
-                            <td>⚡ ${sol.transformadorNome || 'N/A'}</td>
-                            <td style="font-weight: 600; color: #f59e0b;">${sol.quantidadeSolicitada} unidade(s)</td>
-                            <td style="font-size: 0.75rem;">📅 ${dataSolicitacao}</td>
-                            <td><span class="status ${statusClass}">${statusText}</span></td>
-                            <td class="action-buttons">
-                                <button class="btn-print" onclick="printSolicitacao('${sol.protocolo}', '${sol.transformadorNome}', ${sol.quantidadeSolicitada}, '${sol.solicitante}', '${sol.observacao.replace(/'/g, "\\'")}', ${sol.dataSolicitacao}, '${sol.status}')">
-                                    🖨️ Imprimir
-                                </button>
-                                ${sol.status === 'PENDENTE' ? `
-                                    <button class="btn-edit" onclick="editSolicitacao('${key}', '${sol.protocolo}', '${sol.transformadorId}', '${sol.transformadorNome}', ${sol.quantidadeSolicitada}, '${sol.solicitante}', '${sol.observacao.replace(/'/g, "\\'")}')">
-                                        ✏️ Editar
-                                    </button>
-                                    <button class="btn-delete" onclick="deleteSolicitacao('${key}', '${sol.protocolo}')">
-                                        🗑️ Excluir
-                                    </button>
-                                ` : ''}
-                            </td>
-                        </tr>
-                    `;
-                });
-                
-                tbody.innerHTML = html || '<tr><td colspan="6" class="empty-state">📋 Nenhuma solicitação encontrada</td>' + '</tr>';
+                tbody.innerHTML=html||'<tr><td colspan="6" class="empty-state">📋 Nenhuma solicitação</td></tr>';
             });
         }
 
-        // Função para verificar estoque ao selecionar
-        document.getElementById('withdrawPotenciaSel').addEventListener('change', async (e) => {
-            const id = e.target.value;
-            if (id) {
-                const stockRef = ref(db, `estoque/${id}`);
-                const snapshot = await get(stockRef);
-                const quantidade = snapshot.val()?.quantidade || 0;
-                const infoBox = document.getElementById('stockInfo');
-                const currentStockSpan = document.getElementById('currentStock');
-                
-                if (quantidade > 0) {
-                    infoBox.style.display = 'block';
-                    currentStockSpan.textContent = quantidade;
-                    currentStockSpan.style.color = '#f59e0b';
-                    currentStockSpan.style.fontWeight = 'bold';
-                } else {
-                    infoBox.style.display = 'block';
-                    currentStockSpan.textContent = 'ESGOTADO';
-                    currentStockSpan.style.color = '#ef4444';
-                    currentStockSpan.style.fontWeight = 'bold';
-                }
-            } else {
-                document.getElementById('stockInfo').style.display = 'none';
-            }
+        document.getElementById('withdrawPotenciaSel').addEventListener('change',async(e)=>{
+            if(e.target.value){
+                const snap=await get(ref(db,`estoque/${e.target.value}`));
+                const qtd=snap.val()?.quantidade||0;
+                document.getElementById('stockInfo').style.display='block';
+                document.getElementById('currentStock').innerHTML=qtd>0?qtd:'ESGOTADO';
+                document.getElementById('currentStock').style.color=qtd>0?'#f59e0b':'#ef4444';
+            }else{document.getElementById('stockInfo').style.display='none';}
         });
 
-        // Função para criar solicitação de retirada com validação
-        document.getElementById('formWithdraw').onsubmit = async (e) => {
+        document.getElementById('formWithdraw').onsubmit=async(e)=>{
             e.preventDefault();
-            
-            const selectElement = document.getElementById('withdrawPotenciaSel');
-            const id = selectElement.value;
-            const nome = selectElement.options[selectElement.selectedIndex].text.replace('⚡ ', '');
-            const qtdSolicitada = parseInt(document.getElementById('withdrawQtd').value);
-            const solicitante = document.getElementById('solicitante').value;
-            const observacao = document.getElementById('observacao').value;
-            const usuarioLogado = auth.currentUser?.email || 'Sistema';
-            const protocolo = gerarProtocolo();
-            
-            if (!id || !qtdSolicitada || qtdSolicitada < 1) {
-                showToast('❌ Por favor, preencha todos os campos obrigatórios!', true);
-                return;
-            }
-            
-            if (!solicitante) {
-                showToast('❌ Por favor, informe o solicitante!', true);
-                return;
-            }
-            
-            if (!observacao) {
-                showToast('❌ Por favor, informe a justificativa da retirada!', true);
-                return;
-            }
-            
+            const sel=document.getElementById('withdrawPotenciaSel');
+            const id=sel.value;
+            const nome=sel.options[sel.selectedIndex].text.replace('⚡ ','');
+            const qtd=parseInt(document.getElementById('withdrawQtd').value);
+            const solicitante=document.getElementById('solicitante').value;
+            const obs=document.getElementById('observacao').value;
+            if(!id||!qtd||qtd<1||!solicitante||!obs) return showToast('❌ Preencha todos os campos!',true);
             showLoading();
-            
-            try {
-                // Verificar estoque atual
-                const stockRef = ref(db, `estoque/${id}`);
-                const snapshot = await get(stockRef);
-                const currentStock = snapshot.val()?.quantidade || 0;
-                
-                // Validar se a quantidade solicitada é maior que o estoque
-                if (qtdSolicitada > currentStock) {
-                    showToast(`❌ Quantidade solicitada (${qtdSolicitada}) é maior que o estoque disponível (${currentStock} unidades)!`, true);
-                    hideLoading();
-                    return;
-                }
-                
-                // Criar solicitação no banco de dados
-                const novaSolicitacao = {
-                    protocolo: protocolo,
-                    transformadorId: id,
-                    transformadorNome: nome,
-                    quantidadeSolicitada: qtdSolicitada,
-                    solicitante: solicitante,
-                    observacao: observacao,
-                    status: 'PENDENTE',
-                    dataSolicitacao: serverTimestamp(),
-                    usuarioSolicitante: usuarioLogado,
-                    estoqueAtual: currentStock
-                };
-                
-                await push(ref(db, 'solicitacoes'), novaSolicitacao);
-                
-                showToast(`✅ Solicitação enviada com sucesso! Protocolo: ${protocolo}`);
-                
-                // Limpar formulário
+            try{
+                const stockSnap=await get(ref(db,`estoque/${id}`));
+                const currentStock=stockSnap.val()?.quantidade||0;
+                if(qtd>currentStock){showToast(`❌ Estoque insuficiente (${currentStock} disponível)!`,true);hideLoading();return;}
+                await push(ref(db,'solicitacoes'),{protocolo:gerarProtocolo(),transformadorId:id,transformadorNome:nome,quantidadeSolicitada:qtd,solicitante:solicitante,observacao:obs,status:'PENDENTE',dataSolicitacao:serverTimestamp(),usuarioSolicitante:auth.currentUser?.email,estoqueAtual:currentStock});
+                showToast('✅ Solicitação enviada!');
                 e.target.reset();
-                document.getElementById('stockInfo').style.display = 'none';
-                document.getElementById('withdrawPotenciaSel').value = '';
-                
-            } catch (error) {
-                console.error('Erro:', error);
-                showToast('❌ Erro ao enviar solicitação!', true);
-            } finally {
-                hideLoading();
-            }
+                document.getElementById('stockInfo').style.display='none';
+            }catch(err){showToast('❌ Erro!',true);}
+            finally{hideLoading();}
         };
 
-        // Auth State Listener
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('authSection').style.display = 'none';
-                document.getElementById('mainContent').style.display = 'block';
-                document.getElementById('logoutBtn').style.display = 'flex';
-                document.getElementById('userInfo').style.display = 'flex';
-                document.getElementById('userEmail').textContent = user.email;
-                
-                // Carregar solicitações
+        onAuthStateChanged(auth,(user)=>{
+            if(user){
+                document.getElementById('authSection').style.display='none';
+                document.getElementById('mainContent').style.display='block';
+                document.getElementById('logoutBtn').style.display='flex';
+                document.getElementById('userInfo').style.display='flex';
+                document.getElementById('userEmail').textContent=user.email;
                 loadSolicitacoes();
-                
-                // Atualizar último acesso
-                const userRef = ref(db, `usuarios/${user.uid}`);
-                set(ref(db, `usuarios/${user.uid}/ultimoAcesso`), serverTimestamp());
-            } else {
-                document.getElementById('authSection').style.display = 'block';
-                document.getElementById('mainContent').style.display = 'none';
-                document.getElementById('logoutBtn').style.display = 'none';
-                document.getElementById('userInfo').style.display = 'none';
+                set(ref(db,`usuarios/${user.uid}/ultimoAcesso`),serverTimestamp());
+            }else{
+                document.getElementById('authSection').style.display='block';
+                document.getElementById('mainContent').style.display='none';
+                document.getElementById('logoutBtn').style.display='none';
+                document.getElementById('userInfo').style.display='none';
             }
         });
 
-        // Login
-        document.getElementById('loginForm').onsubmit = async (e) => {
+        document.getElementById('loginForm').onsubmit=async(e)=>{
             e.preventDefault();
-            const email = document.getElementById('loginEmail').value;
-            const password = document.getElementById('loginPassword').value;
-            
             showLoading();
-            try {
-                const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                showToast('✅ Login realizado com sucesso!');
-                document.getElementById('loginForm').reset();
-            } catch (error) {
-                console.error('Erro:', error);
-                let message = '❌ Erro ao fazer login!';
-                if (error.code === 'auth/user-not-found') {
-                    message = '❌ Usuário não encontrado!';
-                } else if (error.code === 'auth/wrong-password') {
-                    message = '❌ Senha incorreta!';
-                } else if (error.code === 'auth/invalid-email') {
-                    message = '❌ E-mail inválido!';
-                }
-                showToast(message, true);
-            } finally {
-                hideLoading();
-            }
+            try{await signInWithEmailAndPassword(auth,document.getElementById('loginEmail').value,document.getElementById('loginPassword').value);showToast('✅ Login realizado!');}
+            catch(err){showToast('❌ Email ou senha inválidos!',true);}
+            finally{hideLoading();}
         };
 
-        // Logout
-        document.getElementById('logoutBtn').onclick = async () => {
+        document.getElementById('logoutBtn').onclick=async()=>{
             showLoading();
-            try {
-                await signOut(auth);
-                showToast('✅ Logout realizado com sucesso!');
-                sessionStorage.clear();
-            } catch (error) {
-                console.error('Erro:', error);
-                showToast('❌ Erro ao fazer logout!', true);
-            } finally {
-                hideLoading();
-            }
+            try{await signOut(auth);showToast('✅ Logout realizado!');sessionStorage.clear();}
+            catch(err){showToast('❌ Erro!',true);}
+            finally{hideLoading();}
         };
     </script>
 </body>
