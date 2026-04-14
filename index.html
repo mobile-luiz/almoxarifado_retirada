@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão de Estoque - Solicitação de Retirada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(56, 189, 248, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Header Section */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Grid Layout */
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #f59e0b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid rgba(245, 158, 11, 0.3);
+            padding-bottom: 12px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        label svg {
+            width: 18px;
+            height: 18px;
+            stroke: #f59e0b;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: #0f172a;
+            border: 1.5px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: inherit;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+            background: #1a2335;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Buttons */
+        .btn-withdraw {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-withdraw:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-logout {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        /* Table */
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .solicitacoes-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .solicitacoes-table thead {
+            position: sticky;
+            top: 0;
+            background: #1e293b;
+            z-index: 10;
+        }
+
+        .solicitacoes-table th {
+            text-align: left;
+            padding: 12px;
+            color: #f59e0b;
+            font-weight: 600;
+            font-size: 0.85rem;
+            border-bottom: 2px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .solicitacoes-table td {
+            padding: 12px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+            font-size: 0.85rem;
+        }
+
+        .solicitacoes-table tr:hover {
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-pendente {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .status-aprovada {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+
+        .status-rejeitada {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .btn-edit, .btn-delete, .btn-print {
+            padding: 4px 10px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.7rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-edit {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            color: white;
+        }
+
+        .btn-edit:hover, .btn-delete:hover, .btn-print:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            animation: fadeInUp 0.3s ease-out;
+        }
+
+        .modal-content h3 {
+            color: #f59e0b;
+            margin-bottom: 20px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: #334155;
+            color: white;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        /* Alert Box */
+        .alert-box {
+            background: rgba(239, 68, 68, 0.2);
+            border-left: 3px solid #ef4444;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .alert-box p {
+            color: #ef4444;
+            font-size: 0.85rem;
+        }
+
+        .alert-box strong {
+            color: #ef4444;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Loading */
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(245, 158, 11, 0.3);
+            border-top-color: #f59e0b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid #f59e0b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .info-box p {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+        }
+
+        .info-box strong {
+            color: #f59e0b;
+        }
+
+        /* User Info */
+        .user-info {
+            position: fixed;
+            top: 20px;
+            right: 140px;
+            background: rgba(30, 41, 59, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 8px 16px;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.9rem;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+            body::before {
+                display: none;
+            }
+            .btn-logout, .btn-withdraw, .action-buttons, .btn-back, .header .badge, .user-info {
+                display: none !important;
+            }
+            .card {
+                background: white;
+                color: black;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+            .card-title {
+                color: #333;
+                border-bottom: 2px solid #f59e0b;
+            }
+            .solicitacoes-table th {
+                color: #333;
+                background: #f5f5f5;
+            }
+            .solicitacoes-table td {
+                color: #333;
+            }
+            .status-pendente, .status-aprovada, .status-rejeitada {
+                background: #f0f0f0;
+                color: #333;
+            }
+            .container {
+                max-width: 100%;
+                margin: 0;
+                padding: 10px;
+            }
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .grid-2col {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .card {
+                padding: 24px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+
+            .user-info {
+                top: 10px;
+                right: 110px;
+                font-size: 0.75rem;
+            }
+
+            .btn-logout {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+    </div>
+
+    <div class="toast" id="toast">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 6L9 17l-5-5"/>
+        </svg>
+        <span id="toastMessage">Operação realizada com sucesso!</span>
+    </div>
+
+    <!-- Modal de Confirmação de Exclusão -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <h3>Confirmar Exclusão</h3>
+            <p style="color: #cbd5e1; margin-bottom: 20px;">Tem certeza que deseja excluir esta solicitação?</p>
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="btn-confirm" id="confirmDelete">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição -->
+    <div class="modal" id="modalEdit">
+        <div class="modal-content">
+            <h3>Editar Solicitação</h3>
+            <div class="alert-box" id="editAlertBox">
+                <p>⚠️ <strong>Atenção!</strong> <span id="editAlertMessage"></span></p>
+            </div>
+            <form id="editForm">
+                <div class="form-group">
+                    <label>Transformador</label>
+                    <select id="editPotenciaSel" required>
+                        <option value="t10kv">⚡ Transformador 10kV</option>
+                        <option value="t30kv">⚡ Transformador 30kV</option>
+                        <option value="t45kv">⚡ Transformador 45kV</option>
+                        <option value="t70kv">⚡ Transformador 70kV</option>
+                        <option value="t12_5kv">⚡ Transformador 12.5kV</option>
+                        <option value="t150kv">⚡ Transformador 150kV</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Quantidade</label>
+                    <input type="number" id="editQtd" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Solicitante</label>
+                    <input type="text" id="editSolicitante" required>
+                </div>
+                <div class="form-group">
+                    <label>Justificativa</label>
+                    <textarea id="editObservacao" required></textarea>
+                </div>
+                <div class="info-box" id="editStockInfo" style="display: none;">
+                    <p>📊 <strong>Estoque atual:</strong> <span id="editCurrentStock">0</span> unidades</p>
+                </div>
+                <div class="modal-buttons">
+                    <button type="button" class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+                    <button type="submit" class="btn-save">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Botão Logout -->
+    <div class="user-info" id="userInfo" style="display: none;">
+        👤 <span id="userEmail"></span>
+    </div>
+    <button class="btn-logout" id="logoutBtn" style="display: none;">
+        🚪 Sair
+    </button>
+
+    <div class="container">
+        <!-- Auth Section -->
+        <div id="authSection" class="auth-content">
+            <div class="auth-container">
+                <!-- Login Card -->
+                <div id="loginCard" class="card">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="10 17 15 12 10 7"/>
+                            <line x1="15" x2="3" y1="12" y2="12"/>
+                        </svg>
+                        Login - Solicitação de Retirada
+                    </div>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                                E-mail
+                            </label>
+                            <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                                Senha
+                            </label>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn-withdraw">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                <polyline points="10 17 15 12 10 7"/>
+                                <line x1="15" x2="3" y1="12" y2="12"/>
+                            </svg>
+                            Entrar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content - Solicitação de Retirada -->
+        <div id="mainContent" class="main-content" style="display: none;">
+            <div class="header">
+                <div class="badge">📤 Sistema de Solicitações</div>
+                <h1>Solicitação de Retirada</h1>
+                <p class="subtitle">Registre e acompanhe suas solicitações de retirada de transformadores</p>
+            </div>
+
+            <div class="grid-2col">
+                <!-- Formulário de Solicitação -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                            <polyline points="10 17 15 12 10 7"/>
+                            <line x1="15" x2="3" y1="12" y2="12"/>
+                        </svg>
+                        Nova Solicitação
+                    </div>
+                    
+                    <form id="formWithdraw">
+                        <div class="form-group">
+                            <label>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <rect x="4" y="4" width="16" height="16" rx="2"/>
+                                    <line x1="9" y1="9" x2="15" y2="15"/>
+                                    <line x1="15" y1="9" x2="9" y2="15"/>
+                                </svg>
+                                Transformador
+                            </label>
+                            <select id="withdrawPotenciaSel" required>
+                                <option value="" disabled selected>Selecione a potência...</option>
+                                <option value="t10kv">⚡ Transformador 10kV</option>
+                                <option value="t30kv">⚡ Transformador 30kV</option>
+                                <option value="t45kv">⚡ Transformador 45kV</option>
+                                <option value="t70kv">⚡ Transformador 70kV</option>
+                                <option value="t12_5kv">⚡ Transformador 12.5kV</option>
+                                <option value="t150kv">⚡ Transformador 150kV</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="16"/>
+                                    <line x1="8" y1="12" x2="16" y2="12"/>
+                                </svg>
+                                Quantidade para Retirar
+                            </label>
+                            <input type="number" id="withdrawQtd" min="1" placeholder="Digite a quantidade" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                                Solicitante
+                            </label>
+                            <input type="text" id="solicitante" placeholder="Nome de quem está solicitando" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 12v10H4V12M2 7h20v5H2zM12 22v-5"/>
+                                </svg>
+                                Justificativa / Observação
+                            </label>
+                            <textarea id="observacao" placeholder="Motivo da retirada, destino, etc..." required></textarea>
+                        </div>
+
+                        <div class="info-box" id="stockInfo" style="display: none;">
+                            <p>📊 <strong>Estoque atual:</strong> <span id="currentStock">0</span> unidades</p>
+                        </div>
+
+                        <button type="submit" class="btn-withdraw">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                                <polyline points="10 17 15 12 10 7"/>
+                                <line x1="15" x2="3" y1="12" y2="12"/>
+                            </svg>
+                            Enviar Solicitação
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Lista de Solicitações -->
+                <div class="card">
+                    <div class="card-title">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                        </svg>
+                        Minhas Solicitações
+                    </div>
+                    <div class="table-container">
+                        <table class="solicitacoes-table" id="solicitacoesTable">
+                            <thead>
+                                <tr>
+                                    <th>Protocolo</th>
+                                    <th>Item</th>
+                                    <th>Quantidade</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="solicitacoesList">
+                                <tr>
+                                    <td colspan="6" class="empty-state">Carregando solicitações...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, serverTimestamp, push, get, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, setPersistence, browserSessionPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwTiqQBRBBYth4wJtjhdL1VQ0LZV7PKco",
+            authDomain: "almoxarifado-c2fbc.firebaseapp.com",
+            databaseURL: "https://almoxarifado-c2fbc-default-rtdb.firebaseio.com",
+            projectId: "almoxarifado-c2fbc",
+            storageBucket: "almoxarifado-c2fbc.firebasestorage.app",
+            messagingSenderId: "349325049629",
+            appId: "1:349325049629:web:002687796411303ce8ebf4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        setPersistence(auth, browserSessionPersistence).catch(console.error);
+
+        const loading = document.getElementById('loading');
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toastMessage');
+        const modal = document.getElementById('modal');
+        const modalEdit = document.getElementById('modalEdit');
+        let itemToDelete = null;
+        let editKey = null;
+
+        function showToast(message, isError = false) {
+            toastMessage.textContent = message;
+            toast.style.background = isError 
+                ? 'linear-gradient(135deg, #ef4444, #dc2626)' 
+                : 'linear-gradient(135deg, #10b981, #059669)';
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function showLoading() {
+            loading.classList.add('show');
+        }
+
+        function hideLoading() {
+            loading.classList.remove('show');
+        }
+
+        window.closeModal = function() {
+            modal.classList.remove('show');
+            itemToDelete = null;
+        };
+
+        window.closeEditModal = function() {
+            modalEdit.classList.remove('show');
+            editKey = null;
+            document.getElementById('editAlertBox').style.display = 'none';
+        };
+
+        // Função para gerar número de protocolo único
+        function gerarProtocolo() {
+            const data = new Date();
+            const ano = data.getFullYear();
+            const mes = String(data.getMonth() + 1).padStart(2, '0');
+            const dia = String(data.getDate()).padStart(2, '0');
+            const hora = String(data.getHours()).padStart(2, '0');
+            const minuto = String(data.getMinutes()).padStart(2, '0');
+            const segundo = String(data.getSeconds()).padStart(2, '0');
+            const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+            return `SOL-${ano}${mes}${dia}-${hora}${minuto}${segundo}-${random}`;
+        }
+
+        // Função para imprimir solicitação
+        window.printSolicitacao = function(protocolo, nome, quantidade, solicitante, observacao, data, status) {
+            const printWindow = window.open('', '_blank');
+            const dataFormatada = data ? new Date(data).toLocaleString('pt-BR') : new Date().toLocaleString('pt-BR');
+            
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Solicitação ${protocolo}</title>
+                    <style>
+                        body {
+                            font-family: 'Inter', 'Segoe UI', sans-serif;
+                            padding: 40px;
+                            max-width: 800px;
+                            margin: 0 auto;
+                        }
+                        .header {
+                            text-align: center;
+                            border-bottom: 2px solid #f59e0b;
+                            padding-bottom: 20px;
+                            margin-bottom: 30px;
+                        }
+                        .header h1 {
+                            color: #f59e0b;
+                            margin: 0;
+                        }
+                        .header p {
+                            color: #666;
+                            margin: 5px 0 0;
+                        }
+                        .content {
+                            margin: 30px 0;
+                        }
+                        .info-row {
+                            display: flex;
+                            margin-bottom: 15px;
+                            padding: 10px;
+                            border-bottom: 1px solid #eee;
+                        }
+                        .label {
+                            font-weight: bold;
+                            width: 150px;
+                            color: #333;
+                        }
+                        .value {
+                            color: #555;
+                        }
+                        .status {
+                            display: inline-block;
+                            padding: 4px 12px;
+                            border-radius: 20px;
+                            font-size: 0.85rem;
+                            font-weight: bold;
+                        }
+                        .status-pendente { background: #fef3c7; color: #d97706; }
+                        .status-aprovada { background: #d1fae5; color: #059669; }
+                        .status-rejeitada { background: #fee2e2; color: #dc2626; }
+                        .footer {
+                            margin-top: 50px;
+                            text-align: center;
+                            border-top: 1px solid #eee;
+                            padding-top: 20px;
+                            color: #999;
+                            font-size: 0.8rem;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Solicitação de Retirada</h1>
+                        <p>Protocolo: ${protocolo}</p>
+                    </div>
+                    <div class="content">
+                        <div class="info-row">
+                            <div class="label">Transformador:</div>
+                            <div class="value">${nome}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="label">Quantidade:</div>
+                            <div class="value">${quantidade} unidade(s)</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="label">Solicitante:</div>
+                            <div class="value">${solicitante}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="label">Data da Solicitação:</div>
+                            <div class="value">${dataFormatada}</div>
+                        </div>
+                        <div class="info-row">
+                            <div class="label">Status:</div>
+                            <div class="value"><span class="status status-${status.toLowerCase()}">${status}</span></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="label">Justificativa:</div>
+                            <div class="value">${observacao}</div>
+                        </div>
+                    </div>
+                    <div class="footer">
+                        <p>Este documento é uma solicitação de retirada de estoque.</p>
+                        <p>Data de emissão: ${new Date().toLocaleString('pt-BR')}</p>
+                    </div>
+                    <script>
+                        window.onload = function() { window.print(); setTimeout(function() { window.close(); }, 500); };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
+
+        // Função para verificar estoque no modal de edição
+        document.getElementById('editPotenciaSel').addEventListener('change', async (e) => {
+            const id = e.target.value;
+            if (id) {
+                const stockRef = ref(db, `estoque/${id}`);
+                const snapshot = await get(stockRef);
+                const quantidade = snapshot.val()?.quantidade || 0;
+                const infoBox = document.getElementById('editStockInfo');
+                const currentStockSpan = document.getElementById('editCurrentStock');
+                
+                if (quantidade > 0) {
+                    infoBox.style.display = 'block';
+                    currentStockSpan.textContent = quantidade;
+                    currentStockSpan.style.color = '#f59e0b';
+                    currentStockSpan.style.fontWeight = 'bold';
+                } else {
+                    infoBox.style.display = 'block';
+                    currentStockSpan.textContent = 'ESGOTADO';
+                    currentStockSpan.style.color = '#ef4444';
+                    currentStockSpan.style.fontWeight = 'bold';
+                }
+            } else {
+                document.getElementById('editStockInfo').style.display = 'none';
+            }
+        });
+
+        // Função para editar solicitação
+        window.editSolicitacao = async function(key, protocolo, transformadorId, transformadorNome, quantidade, solicitante, observacao) {
+            editKey = key;
+            
+            // Preencher formulário de edição
+            document.getElementById('editPotenciaSel').value = transformadorId;
+            document.getElementById('editQtd').value = quantidade;
+            document.getElementById('editSolicitante').value = solicitante;
+            document.getElementById('editObservacao').value = observacao;
+            
+            // Buscar estoque atual
+            const stockRef = ref(db, `estoque/${transformadorId}`);
+            const snapshot = await get(stockRef);
+            const currentStock = snapshot.val()?.quantidade || 0;
+            
+            const infoBox = document.getElementById('editStockInfo');
+            const currentStockSpan = document.getElementById('editCurrentStock');
+            infoBox.style.display = 'block';
+            currentStockSpan.textContent = currentStock;
+            
+            modalEdit.classList.add('show');
+        };
+
+        // Salvar edição com validação de estoque
+        document.getElementById('editForm').onsubmit = async (e) => {
+            e.preventDefault();
+            
+            if (!editKey) {
+                showToast('❌ Erro ao editar solicitação!', true);
+                return;
+            }
+            
+            const transformadorId = document.getElementById('editPotenciaSel').value;
+            const transformadorNome = document.getElementById('editPotenciaSel').options[document.getElementById('editPotenciaSel').selectedIndex].text.replace('⚡ ', '');
+            const quantidadeSolicitada = parseInt(document.getElementById('editQtd').value);
+            const solicitante = document.getElementById('editSolicitante').value;
+            const observacao = document.getElementById('editObservacao').value;
+            
+            if (!transformadorId || !quantidadeSolicitada || !solicitante || !observacao) {
+                showToast('❌ Por favor, preencha todos os campos!', true);
+                return;
+            }
+            
+            // Verificar estoque atual
+            const stockRef = ref(db, `estoque/${transformadorId}`);
+            const snapshot = await get(stockRef);
+            const currentStock = snapshot.val()?.quantidade || 0;
+            
+            // Validar se a quantidade solicitada é maior que o estoque
+            if (quantidadeSolicitada > currentStock) {
+                const alertBox = document.getElementById('editAlertBox');
+                const alertMessage = document.getElementById('editAlertMessage');
+                alertMessage.innerHTML = `A quantidade solicitada (${quantidadeSolicitada}) é maior que o estoque disponível (${currentStock} unidades)!`;
+                alertBox.style.display = 'block';
+                setTimeout(() => {
+                    alertBox.style.display = 'none';
+                }, 5000);
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                // Buscar dados atuais para manter o protocolo e outras informações
+                const solicitacaoRef = ref(db, `solicitacoes/${editKey}`);
+                const snapshotSolic = await get(solicitacaoRef);
+                const dadosAtuais = snapshotSolic.val();
+                
+                if (!dadosAtuais) {
+                    showToast('❌ Solicitação não encontrada!', true);
+                    return;
+                }
+                
+                // Atualizar apenas os campos editáveis
+                await set(solicitacaoRef, {
+                    ...dadosAtuais,
+                    transformadorId: transformadorId,
+                    transformadorNome: transformadorNome,
+                    quantidadeSolicitada: quantidadeSolicitada,
+                    solicitante: solicitante,
+                    observacao: observacao,
+                    editadoEm: serverTimestamp(),
+                    editadoPor: auth.currentUser?.email || 'Sistema',
+                    estoqueAtual: currentStock
+                });
+                
+                showToast('✅ Solicitação editada com sucesso!');
+                closeEditModal();
+            } catch (error) {
+                console.error('Erro ao editar:', error);
+                showToast('❌ Erro ao editar solicitação!', true);
+            } finally {
+                hideLoading();
+            }
+        };
+
+        // Função para excluir solicitação
+        window.deleteSolicitacao = function(key, protocolo) {
+            itemToDelete = { key, protocolo };
+            modal.classList.add('show');
+        };
+
+        document.getElementById('confirmDelete').onclick = async () => {
+            if (itemToDelete) {
+                modal.classList.remove('show');
+                showLoading();
+                
+                try {
+                    const solicitacaoRef = ref(db, `solicitacoes/${itemToDelete.key}`);
+                    await remove(solicitacaoRef);
+                    showToast(`✅ Solicitação ${itemToDelete.protocolo} excluída com sucesso!`);
+                } catch (error) {
+                    console.error('Erro:', error);
+                    showToast('❌ Erro ao excluir solicitação!', true);
+                } finally {
+                    hideLoading();
+                    itemToDelete = null;
+                }
+            }
+        };
+
+        // Função para carregar solicitações
+        function loadSolicitacoes() {
+            const solicitacoesRef = ref(db, 'solicitacoes');
+            
+            onValue(solicitacoesRef, (snapshot) => {
+                const solicitacoes = snapshot.val();
+                const tbody = document.getElementById('solicitacoesList');
+                
+                if (!solicitacoes) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">📋 Nenhuma solicitação encontrada</td>' + '</table>';
+                    return;
+                }
+
+                // Converter para array e ordenar por data (mais recente primeiro)
+                const solicitacoesArray = Object.entries(solicitacoes);
+                solicitacoesArray.sort((a, b) => (b[1].dataSolicitacao || 0) - (a[1].dataSolicitacao || 0));
+                
+                let html = '';
+                solicitacoesArray.forEach(([key, sol]) => {
+                    const dataSolicitacao = sol.dataSolicitacao ? new Date(sol.dataSolicitacao).toLocaleString('pt-BR') : 'Data não disponível';
+                    
+                    let statusClass = '';
+                    let statusText = '';
+                    
+                    switch(sol.status) {
+                        case 'PENDENTE':
+                            statusClass = 'status-pendente';
+                            statusText = '⏳ PENDENTE';
+                            break;
+                        case 'APROVADA':
+                            statusClass = 'status-aprovada';
+                            statusText = '✅ APROVADA';
+                            break;
+                        case 'REJEITADA':
+                            statusClass = 'status-rejeitada';
+                            statusText = '❌ REJEITADA';
+                            break;
+                        default:
+                            statusClass = 'status-pendente';
+                            statusText = '⏳ PENDENTE';
+                    }
+                    
+                    html += `
+                        <tr>
+                            <td style="font-family: monospace; font-size: 0.75rem;">${sol.protocolo || 'N/A'}</td>
+                            <td>⚡ ${sol.transformadorNome || 'N/A'}</td>
+                            <td style="font-weight: 600; color: #f59e0b;">${sol.quantidadeSolicitada} unidade(s)</td>
+                            <td style="font-size: 0.75rem;">📅 ${dataSolicitacao}</td>
+                            <td><span class="status ${statusClass}">${statusText}</span></td>
+                            <td class="action-buttons">
+                                <button class="btn-print" onclick="printSolicitacao('${sol.protocolo}', '${sol.transformadorNome}', ${sol.quantidadeSolicitada}, '${sol.solicitante}', '${sol.observacao.replace(/'/g, "\\'")}', ${sol.dataSolicitacao}, '${sol.status}')">
+                                    🖨️ Imprimir
+                                </button>
+                                ${sol.status === 'PENDENTE' ? `
+                                    <button class="btn-edit" onclick="editSolicitacao('${key}', '${sol.protocolo}', '${sol.transformadorId}', '${sol.transformadorNome}', ${sol.quantidadeSolicitada}, '${sol.solicitante}', '${sol.observacao.replace(/'/g, "\\'")}')">
+                                        ✏️ Editar
+                                    </button>
+                                    <button class="btn-delete" onclick="deleteSolicitacao('${key}', '${sol.protocolo}')">
+                                        🗑️ Excluir
+                                    </button>
+                                ` : ''}
+                            </td>
+                        </tr>
+                    `;
+                });
+                
+                tbody.innerHTML = html || '<tr><td colspan="6" class="empty-state">📋 Nenhuma solicitação encontrada</td>' + '</tr>';
+            });
+        }
+
+        // Função para verificar estoque ao selecionar
+        document.getElementById('withdrawPotenciaSel').addEventListener('change', async (e) => {
+            const id = e.target.value;
+            if (id) {
+                const stockRef = ref(db, `estoque/${id}`);
+                const snapshot = await get(stockRef);
+                const quantidade = snapshot.val()?.quantidade || 0;
+                const infoBox = document.getElementById('stockInfo');
+                const currentStockSpan = document.getElementById('currentStock');
+                
+                if (quantidade > 0) {
+                    infoBox.style.display = 'block';
+                    currentStockSpan.textContent = quantidade;
+                    currentStockSpan.style.color = '#f59e0b';
+                    currentStockSpan.style.fontWeight = 'bold';
+                } else {
+                    infoBox.style.display = 'block';
+                    currentStockSpan.textContent = 'ESGOTADO';
+                    currentStockSpan.style.color = '#ef4444';
+                    currentStockSpan.style.fontWeight = 'bold';
+                }
+            } else {
+                document.getElementById('stockInfo').style.display = 'none';
+            }
+        });
+
+        // Função para criar solicitação de retirada com validação
+        document.getElementById('formWithdraw').onsubmit = async (e) => {
+            e.preventDefault();
+            
+            const selectElement = document.getElementById('withdrawPotenciaSel');
+            const id = selectElement.value;
+            const nome = selectElement.options[selectElement.selectedIndex].text.replace('⚡ ', '');
+            const qtdSolicitada = parseInt(document.getElementById('withdrawQtd').value);
+            const solicitante = document.getElementById('solicitante').value;
+            const observacao = document.getElementById('observacao').value;
+            const usuarioLogado = auth.currentUser?.email || 'Sistema';
+            const protocolo = gerarProtocolo();
+            
+            if (!id || !qtdSolicitada || qtdSolicitada < 1) {
+                showToast('❌ Por favor, preencha todos os campos obrigatórios!', true);
+                return;
+            }
+            
+            if (!solicitante) {
+                showToast('❌ Por favor, informe o solicitante!', true);
+                return;
+            }
+            
+            if (!observacao) {
+                showToast('❌ Por favor, informe a justificativa da retirada!', true);
+                return;
+            }
+            
+            showLoading();
+            
+            try {
+                // Verificar estoque atual
+                const stockRef = ref(db, `estoque/${id}`);
+                const snapshot = await get(stockRef);
+                const currentStock = snapshot.val()?.quantidade || 0;
+                
+                // Validar se a quantidade solicitada é maior que o estoque
+                if (qtdSolicitada > currentStock) {
+                    showToast(`❌ Quantidade solicitada (${qtdSolicitada}) é maior que o estoque disponível (${currentStock} unidades)!`, true);
+                    hideLoading();
+                    return;
+                }
+                
+                // Criar solicitação no banco de dados
+                const novaSolicitacao = {
+                    protocolo: protocolo,
+                    transformadorId: id,
+                    transformadorNome: nome,
+                    quantidadeSolicitada: qtdSolicitada,
+                    solicitante: solicitante,
+                    observacao: observacao,
+                    status: 'PENDENTE',
+                    dataSolicitacao: serverTimestamp(),
+                    usuarioSolicitante: usuarioLogado,
+                    estoqueAtual: currentStock
+                };
+                
+                await push(ref(db, 'solicitacoes'), novaSolicitacao);
+                
+                showToast(`✅ Solicitação enviada com sucesso! Protocolo: ${protocolo}`);
+                
+                // Limpar formulário
+                e.target.reset();
+                document.getElementById('stockInfo').style.display = 'none';
+                document.getElementById('withdrawPotenciaSel').value = '';
+                
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('❌ Erro ao enviar solicitação!', true);
+            } finally {
+                hideLoading();
+            }
+        };
+
+        // Auth State Listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'flex';
+                document.getElementById('userInfo').style.display = 'flex';
+                document.getElementById('userEmail').textContent = user.email;
+                
+                // Carregar solicitações
+                loadSolicitacoes();
+                
+                // Atualizar último acesso
+                const userRef = ref(db, `usuarios/${user.uid}`);
+                set(ref(db, `usuarios/${user.uid}/ultimoAcesso`), serverTimestamp());
+            } else {
+                document.getElementById('authSection').style.display = 'block';
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'none';
+            }
+        });
+
+        // Login
+        document.getElementById('loginForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            showLoading();
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                showToast('✅ Login realizado com sucesso!');
+                document.getElementById('loginForm').reset();
+            } catch (error) {
+                console.error('Erro:', error);
+                let message = '❌ Erro ao fazer login!';
+                if (error.code === 'auth/user-not-found') {
+                    message = '❌ Usuário não encontrado!';
+                } else if (error.code === 'auth/wrong-password') {
+                    message = '❌ Senha incorreta!';
+                } else if (error.code === 'auth/invalid-email') {
+                    message = '❌ E-mail inválido!';
+                }
+                showToast(message, true);
+            } finally {
+                hideLoading();
+            }
+        };
+
+        // Logout
+        document.getElementById('logoutBtn').onclick = async () => {
+            showLoading();
+            try {
+                await signOut(auth);
+                showToast('✅ Logout realizado com sucesso!');
+                sessionStorage.clear();
+            } catch (error) {
+                console.error('Erro:', error);
+                showToast('❌ Erro ao fazer logout!', true);
+            } finally {
+                hideLoading();
+            }
+        };
+    </script>
+</body>
+</html>
