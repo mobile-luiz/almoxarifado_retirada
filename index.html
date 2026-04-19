@@ -279,7 +279,7 @@
         .solicitacoes-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 700px;
+            min-width: 800px;
         }
 
         .solicitacoes-table thead {
@@ -354,7 +354,7 @@
             text-shadow: 0 0 2px rgba(0,0,0,0.3);
         }
 
-        .status-rejeitado {
+        .status-cancelado {
             background: rgba(239, 68, 68, 0.25);
             color: #f87171;
             border: 1px solid rgba(239, 68, 68, 0.5);
@@ -368,7 +368,7 @@
             flex-wrap: wrap;
         }
 
-        .btn-edit, .btn-delete, .btn-print, .btn-approve, .btn-reject {
+        .btn-edit, .btn-delete, .btn-print, .btn-approve, .btn-cancel {
             padding: 4px 8px;
             border: none;
             border-radius: 6px;
@@ -387,7 +387,7 @@
             color: white;
         }
 
-        .btn-reject {
+        .btn-cancel {
             background: linear-gradient(135deg, #ef4444, #dc2626);
             color: white;
         }
@@ -491,6 +491,23 @@
             font-size: 0.8rem;
         }
 
+        .user-filter-info {
+            background: rgba(245, 158, 11, 0.15);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            color: #f59e0b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .user-filter-info span {
+            font-weight: 600;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -550,7 +567,7 @@
             font-weight: 600;
         }
 
-        .btn-cancel {
+        .btn-cancel-modal {
             background: #334155;
             color: white;
         }
@@ -670,12 +687,149 @@
             margin-left: 5px;
         }
 
+        /* Estilos específicos para o PDF profissional */
+        .pdf-container {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            padding: 30px;
+            background: white;
+        }
+        
+        .pdf-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #f59e0b;
+            padding-bottom: 20px;
+        }
+        
+        .pdf-header h1 {
+            color: #f59e0b;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .pdf-header h2 {
+            color: #333;
+            font-size: 18px;
+            font-weight: normal;
+        }
+        
+        .pdf-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .pdf-info-item {
+            text-align: center;
+        }
+        
+        .pdf-info-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        
+        .pdf-info-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .pdf-table th {
+            background: #f59e0b;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: bold;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .pdf-table td {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            font-size: 11px;
+            color: #333;
+        }
+        
+        .pdf-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        .pdf-status {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .pdf-status-pendente {
+            background: #fef3c7;
+            color: #d97706;
+        }
+        
+        .pdf-status-concluido {
+            background: #d1fae5;
+            color: #059669;
+        }
+        
+        .pdf-status-cancelado {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .pdf-footer {
+            margin-top: 30px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+            font-size: 10px;
+            color: #999;
+        }
+        
+        .pdf-summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .pdf-summary-item {
+            text-align: center;
+        }
+        
+        .pdf-summary-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #f59e0b;
+        }
+        
+        .pdf-summary-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 5px;
+        }
+
         @media print {
             body {
                 background: white;
                 padding: 20px;
             }
-            .btn-logout, .btn-withdraw, .action-buttons, .header .badge, .user-info, .pagination, .filter-bar, .btn-pdf, .card-actions {
+            .btn-logout, .btn-withdraw, .action-buttons, .header .badge, .user-info, .pagination, .filter-bar, .btn-pdf, .card-actions, .user-filter-info {
                 display: none !important;
             }
             .card {
@@ -691,24 +845,6 @@
             }
             .solicitacoes-table td {
                 color: #333;
-            }
-            .status-pendente {
-                background: #fef3c7;
-                color: #d97706;
-                font-weight: bold;
-                border: 1px solid #d97706;
-            }
-            .status-concluido {
-                background: #d1fae5;
-                color: #059669;
-                font-weight: bold;
-                border: 1px solid #059669;
-            }
-            .status-rejeitado {
-                background: #fee2e2;
-                color: #dc2626;
-                font-weight: bold;
-                border: 1px solid #dc2626;
             }
         }
 
@@ -736,7 +872,7 @@
             .card { padding: 16px; }
             .card-title { font-size: 1rem; flex-direction: column; align-items: flex-start; }
             .action-buttons { flex-direction: column; }
-            .btn-edit, .btn-delete, .btn-print, .btn-approve, .btn-reject {
+            .btn-edit, .btn-delete, .btn-print, .btn-approve, .btn-cancel {
                 width: 100%;
                 justify-content: center;
             }
@@ -823,12 +959,16 @@
 
                 <div class="card">
                     <div class="card-title">
-                        <span>📋 Solicitações</span>
+                        <span>📋 Minhas Solicitações</span>
                         <div class="card-actions">
                             <button class="btn-pdf" id="exportPDFBtn">
                                 📄 Salvar em PDF
                             </button>
                         </div>
+                    </div>
+                    
+                    <div class="user-filter-info">
+                        📧 Filtrando solicitações do usuário: <span id="filterEmailDisplay"></span>
                     </div>
                     
                     <div class="filter-bar">
@@ -837,7 +977,7 @@
                             <option value="all">📊 Todos os status</option>
                             <option value="PENDENTE">⏳ Pendentes</option>
                             <option value="CONCLUIDO">✅ Concluídas</option>
-                            <option value="REJEITADO">❌ Rejeitadas</option>
+                            <option value="CANCELADO">❌ Canceladas</option>
                         </select>
                     </div>
                     
@@ -878,7 +1018,7 @@
             <h3 id="modalTitle">Confirmar Ação</h3>
             <p id="modalMessage" style="color: #cbd5e1; margin-bottom: 20px;"></p>
             <div class="modal-buttons">
-                <button class="btn-cancel" onclick="closeActionModal()">Cancelar</button>
+                <button class="btn-cancel-modal" onclick="closeActionModal()">Cancelar</button>
                 <button class="btn-save" id="confirmActionBtn">Confirmar</button>
             </div>
         </div>
@@ -980,24 +1120,24 @@
             }
         }
 
-        async function rejeitarSolicitacao(solicitationId, protocolo) {
+        async function cancelarSolicitacao(solicitationId, protocolo) {
             showLoading();
             try {
-                await set(ref(db, `solicitacoes/${solicitationId}/status`), 'REJEITADO');
-                await set(ref(db, `solicitacoes/${solicitationId}/dataRejeicao`), serverTimestamp());
-                await set(ref(db, `solicitacoes/${solicitationId}/rejeitadoPor`), currentUser?.email);
+                await set(ref(db, `solicitacoes/${solicitationId}/status`), 'CANCELADO');
+                await set(ref(db, `solicitacoes/${solicitationId}/dataCancelamento`), serverTimestamp());
+                await set(ref(db, `solicitacoes/${solicitationId}/canceladoPor`), currentUser?.email);
                 
                 await push(ref(db, 'activities'), {
                     userId: currentUser?.uid,
                     userEmail: currentUser?.email,
-                    action: `Rejeitou solicitação ${protocolo}`,
+                    action: `Cancelou solicitação ${protocolo}`,
                     timestamp: serverTimestamp()
                 });
                 
-                showToast(`❌ Solicitação ${protocolo} rejeitada!`);
+                showToast(`❌ Solicitação ${protocolo} cancelada!`);
             } catch (error) {
-                console.error('Erro ao rejeitar:', error);
-                showToast('❌ Erro ao rejeitar solicitação!', true);
+                console.error('Erro ao cancelar:', error);
+                showToast('❌ Erro ao cancelar solicitação!', true);
             } finally {
                 hideLoading();
             }
@@ -1042,10 +1182,10 @@
                 () => concluirSolicitacao(id, transformadorId, quantidade, protocolo));
         };
 
-        window.rejeitarSolicitacao = function(id, protocolo) {
-            openActionModal('Rejeitar Solicitação',
-                `Confirmar rejeição da solicitação ${protocolo}?`,
-                () => rejeitarSolicitacao(id, protocolo));
+        window.cancelarSolicitacao = function(id, protocolo) {
+            openActionModal('Cancelar Solicitação',
+                `Confirmar cancelamento da solicitação ${protocolo}?`,
+                () => cancelarSolicitacao(id, protocolo));
         };
 
         window.deletarSolicitacao = function(id, protocolo) {
@@ -1055,8 +1195,8 @@
         };
 
         window.printSolicitacao = function(protocolo, nome, quantidade, solicitante, numeroObra, valorObra, status) {
-            const statusText = status === 'PENDENTE' ? 'PENDENTE' : status === 'CONCLUIDO' ? 'CONCLUÍDA' : 'REJEITADA';
-            const statusClass = status === 'PENDENTE' ? 'pendente' : status === 'CONCLUIDO' ? 'concluido' : 'rejeitado';
+            const statusText = status === 'PENDENTE' ? 'PENDENTE' : status === 'CONCLUIDO' ? 'CONCLUÍDA' : 'CANCELADA';
+            const statusClass = status === 'PENDENTE' ? 'pendente' : status === 'CONCLUIDO' ? 'concluido' : 'cancelado';
             
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
@@ -1070,7 +1210,7 @@
                         .status { display: inline-block; padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
                         .status-pendente { background: #fef3c7; color: #d97706; border: 2px solid #d97706; }
                         .status-concluido { background: #d1fae5; color: #059669; border: 2px solid #059669; }
-                        .status-rejeitado { background: #fee2e2; color: #dc2626; border: 2px solid #dc2626; }
+                        .status-cancelado { background: #fee2e2; color: #dc2626; border: 2px solid #dc2626; }
                         .info { margin: 20px 0; }
                         .info p { margin: 10px 0; font-size: 14px; }
                         .info strong { font-weight: bold; }
@@ -1098,88 +1238,144 @@
         };
 
         window.exportToPDF = function() {
-            const element = document.getElementById('solicitacoesTable').cloneNode(true);
+            const filtered = allSolicitacoes.filter(s => filterSolicitacao(s));
             
+            // Calcular totais
+            let totalPendentes = 0;
+            let totalConcluidas = 0;
+            let totalCanceladas = 0;
+            let valorTotalObras = 0;
+            
+            filtered.forEach(sol => {
+                if (sol.status === 'PENDENTE') totalPendentes++;
+                else if (sol.status === 'CONCLUIDO') totalConcluidas++;
+                else if (sol.status === 'CANCELADO') totalCanceladas++;
+                if (sol.valorObra) valorTotalObras += parseFloat(sol.valorObra);
+            });
+            
+            // Criar container do PDF profissional
             const container = document.createElement('div');
-            container.style.padding = '20px';
-            container.style.fontFamily = 'Arial, sans-serif';
+            container.className = 'pdf-container';
+            container.style.cssText = 'font-family: "Helvetica", "Arial", sans-serif; padding: 30px; background: white;';
             
-            const header = document.createElement('div');
-            header.style.textAlign = 'center';
-            header.style.marginBottom = '30px';
-            header.style.borderBottom = '2px solid #f59e0b';
-            header.style.paddingBottom = '20px';
-            header.innerHTML = `
-                <h1 style="color: #f59e0b; margin: 0;">StockManager Pro</h1>
-                <h2 style="color: #333; margin: 10px 0;">Relatório de Solicitações</h2>
-                <p style="color: #666; margin: 5px 0;">Gerado em: ${new Date().toLocaleString('pt-BR')}</p>
-                <p style="color: #666; margin: 5px 0;">Usuário: ${currentUser?.email || 'Sistema'}</p>
-                <p style="color: #666; margin: 5px 0; font-weight: bold;">Total de registros: ${allSolicitacoes.filter(s => filterSolicitacao(s)).length}</p>
-                <hr>
+            // Cabeçalho
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #f59e0b; padding-bottom: 20px;">
+                    <h1 style="color: #f59e0b; font-size: 28px; margin-bottom: 10px;">📊 StockManager Pro</h1>
+                    <h2 style="color: #333; font-size: 18px; font-weight: normal;">Relatório de Solicitações de Retirada</h2>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold;">Data de Emissão</div>
+                        <div style="font-size: 14px; color: #333; font-weight: bold; margin-top: 5px;">${new Date().toLocaleDateString('pt-BR')}</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold;">Horário</div>
+                        <div style="font-size: 14px; color: #333; font-weight: bold; margin-top: 5px;">${new Date().toLocaleTimeString('pt-BR')}</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold;">Usuário</div>
+                        <div style="font-size: 14px; color: #333; font-weight: bold; margin-top: 5px;">${currentUser?.email || 'Sistema'}</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 11px; color: #666; text-transform: uppercase; font-weight: bold;">Total de Registros</div>
+                        <div style="font-size: 14px; color: #f59e0b; font-weight: bold; margin-top: 5px;">${filtered.length}</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; display: flex; justify-content: space-around;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: bold; color: #f59e0b;">${totalPendentes}</div>
+                        <div style="font-size: 11px; color: #666; margin-top: 5px;">📋 Pendentes</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: bold; color: #10b981;">${totalConcluidas}</div>
+                        <div style="font-size: 11px; color: #666; margin-top: 5px;">✅ Concluídas</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: bold; color: #ef4444;">${totalCanceladas}</div>
+                        <div style="font-size: 11px; color: #666; margin-top: 5px;">❌ Canceladas</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 20px; font-weight: bold; color: #f59e0b;">R$ ${valorTotalObras.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div style="font-size: 11px; color: #666; margin-top: 5px;">💰 Valor Total das Obras</div>
+                    </div>
+                </div>
             `;
             
-            const footer = document.createElement('div');
-            footer.style.textAlign = 'center';
-            footer.style.marginTop = '30px';
-            footer.style.paddingTop = '20px';
-            footer.style.borderTop = '1px solid #ddd';
-            footer.style.fontSize = '12px';
-            footer.style.color = '#666';
-            footer.innerHTML = '<p>Sistema de Gestão de Estoque - StockManager Pro</p>';
+            // Criar tabela
+            const table = document.createElement('table');
+            table.style.cssText = 'width: 100%; border-collapse: collapse; margin-top: 20px;';
+            table.innerHTML = `
+                <thead>
+                    <tr style="background: #f59e0b;">
+                        <th style="padding: 12px; text-align: left; color: white; font-size: 12px; font-weight: bold; border: 1px solid #e0e0e0;">Protocolo</th>
+                        <th style="padding: 12px; text-align: left; color: white; font-size: 12px; font-weight: bold; border: 1px solid #e0e0e0;">Transformador</th>
+                        <th style="padding: 12px; text-align: left; color: white; font-size: 12px; font-weight: bold; border: 1px solid #e0e0e0;">Qtd</th>
+                        <th style="padding: 12px; text-align: left; color: white; font-size: 12px; font-weight: bold; border: 1px solid #e0e0e0;">Solicitante</th>
+                        <th style="padding: 12px; text-align: left; color: white; font-size: 12px; font-weight: bold; border: 1px solid #e0e0e0;">Nº Obra</th>
+                        <th style="padding: 12px; text-align: left; color: white; font-size: 12px; font-weight: bold; border: 1px solid #e0e0e0;">Valor Obra</th>
+                        <th style="padding: 12px; text-align: left; color: white; font-size: 12px; font-weight: bold; border: 1px solid #e0e0e0;">Data</th>
+                        <th style="padding: 12px; text-align: left; color: white; font-size: 12px; font-weight: bold; border: 1px solid #e0e0e0;">Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            `;
             
-            element.style.width = '100%';
-            element.style.borderCollapse = 'collapse';
+            const tbody = table.querySelector('tbody');
             
-            const ths = element.querySelectorAll('th');
-            ths.forEach(th => {
-                th.style.backgroundColor = '#f59e0b';
-                th.style.color = 'white';
-                th.style.padding = '10px';
-                th.style.textAlign = 'left';
-                th.style.fontWeight = 'bold';
-                th.style.border = '1px solid #ddd';
-            });
-            
-            const tds = element.querySelectorAll('td');
-            tds.forEach(td => {
-                td.style.padding = '8px';
-                td.style.border = '1px solid #ddd';
-                td.style.color = '#333';
-            });
-            
-            const statusElements = element.querySelectorAll('.status');
-            statusElements.forEach(el => {
-                el.style.display = 'inline-block';
-                el.style.padding = '5px 12px';
-                el.style.borderRadius = '20px';
-                el.style.fontWeight = 'bold';
-                el.style.fontSize = '12px';
-                el.style.textAlign = 'center';
+            filtered.forEach((sol, index) => {
+                const row = tbody.insertRow();
+                row.style.backgroundColor = index % 2 === 0 ? '#f9f9f9' : 'white';
                 
-                if (el.classList.contains('status-pendente')) {
-                    el.style.backgroundColor = '#fef3c7';
-                    el.style.color = '#d97706';
-                    el.style.border = '2px solid #d97706';
-                } else if (el.classList.contains('status-concluido')) {
-                    el.style.backgroundColor = '#d1fae5';
-                    el.style.color = '#059669';
-                    el.style.border = '2px solid #059669';
-                } else if (el.classList.contains('status-rejeitado')) {
-                    el.style.backgroundColor = '#fee2e2';
-                    el.style.color = '#dc2626';
-                    el.style.border = '2px solid #dc2626';
+                let statusClass = '';
+                let statusText = '';
+                if (sol.status === 'PENDENTE') {
+                    statusClass = 'pdf-status-pendente';
+                    statusText = '⏳ PENDENTE';
+                } else if (sol.status === 'CONCLUIDO') {
+                    statusClass = 'pdf-status-concluido';
+                    statusText = '✅ CONCLUÍDA';
+                } else {
+                    statusClass = 'pdf-status-cancelado';
+                    statusText = '❌ CANCELADA';
                 }
+                
+                const valorFormatado = sol.valorObra ? parseFloat(sol.valorObra).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0,00';
+                const dataFormatada = sol.dataSolicitacao ? new Date(sol.dataSolicitacao).toLocaleString('pt-BR') : 'N/A';
+                
+                row.innerHTML = `
+                    <td style="padding: 10px; border: 1px solid #e0e0e0; font-size: 11px; color: #333; font-family: monospace;">${sol.protocolo || 'N/A'}</td>
+                    <td style="padding: 10px; border: 1px solid #e0e0e0; font-size: 11px; color: #333;">${sol.transformadorNome || 'N/A'}</td>
+                    <td style="padding: 10px; border: 1px solid #e0e0e0; font-size: 11px; color: #333; font-weight: bold; text-align: center;">${sol.quantidadeSolicitada}</td>
+                    <td style="padding: 10px; border: 1px solid #e0e0e0; font-size: 11px; color: #333;">${sol.solicitante || 'N/A'}</td>
+                    <td style="padding: 10px; border: 1px solid #e0e0e0; font-size: 11px; color: #333;">${sol.numeroObra || 'N/A'}</td>
+                    <td style="padding: 10px; border: 1px solid #e0e0e0; font-size: 11px; color: #333; font-weight: bold;">R$ ${valorFormatado}</td>
+                    <td style="padding: 10px; border: 1px solid #e0e0e0; font-size: 11px; color: #333;">${dataFormatada}</td>
+                    <td style="padding: 10px; border: 1px solid #e0e0e0; font-size: 11px; color: #333;">
+                        <span style="display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 10px; font-weight: bold; background: ${sol.status === 'PENDENTE' ? '#fef3c7' : sol.status === 'CONCLUIDO' ? '#d1fae5' : '#fee2e2'}; color: ${sol.status === 'PENDENTE' ? '#d97706' : sol.status === 'CONCLUIDO' ? '#059669' : '#dc2626'};">${statusText}</span>
+                    </td>
+                `;
             });
             
-            container.appendChild(header);
-            container.appendChild(element);
+            container.appendChild(table);
+            
+            // Rodapé
+            const footer = document.createElement('div');
+            footer.style.cssText = 'margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #999;';
+            footer.innerHTML = `
+                <p>Sistema de Gestão de Estoque - StockManager Pro</p>
+                <p>Documento gerado eletronicamente - ${new Date().toLocaleString('pt-BR')}</p>
+            `;
             container.appendChild(footer);
             
             const opt = {
                 margin: [0.5, 0.5, 0.5, 0.5],
                 filename: `relatorio_solicitacoes_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 2, letterRendering: true },
+                html2canvas: { scale: 2, letterRendering: true, useCORS: true },
                 jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
             };
             
@@ -1196,7 +1392,13 @@
 
         document.getElementById('exportPDFBtn')?.addEventListener('click', exportToPDF);
 
+        function filterByCurrentUser(solicitacao) {
+            return solicitacao.usuarioSolicitante === currentUser?.email;
+        }
+
         function filterSolicitacao(sol) {
+            if (!filterByCurrentUser(sol)) return false;
+            
             const searchTerm = currentFilter.search.toLowerCase();
             const statusMatch = currentFilter.status === 'all' || sol.status === currentFilter.status;
             const searchMatch = searchTerm === '' || 
@@ -1217,7 +1419,7 @@
             const tbody = document.getElementById('solicitacoesList');
             
             if (pageItems.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">📋 Nenhuma solicitação encontrada</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">📋 Nenhuma solicitação encontrada para o seu usuário</td></tr>';
                 document.getElementById('pageInfo').innerHTML = `Página 0 de 0`;
                 document.getElementById('firstPageBtn').disabled = true;
                 document.getElementById('prevPageBtn').disabled = true;
@@ -1237,9 +1439,9 @@
                 } else if (sol.status === 'CONCLUIDO') {
                     statusClass = 'status-concluido';
                     statusText = '✅ CONCLUÍDA';
-                } else if (sol.status === 'REJEITADO') {
-                    statusClass = 'status-rejeitado';
-                    statusText = '❌ REJEITADA';
+                } else if (sol.status === 'CANCELADO') {
+                    statusClass = 'status-cancelado';
+                    statusText = '❌ CANCELADA';
                 } else {
                     statusClass = 'status-pendente';
                     statusText = sol.status || 'DESCONHECIDO';
@@ -1269,16 +1471,16 @@
                     if (isAdmin) {
                         html += `
                             <button class="btn-approve" onclick="concluirSolicitacao('${sol.firebaseId}','${sol.transformadorId}',${sol.quantidadeSolicitada},'${sol.protocolo}')">✅ Concluir</button>
-                            <button class="btn-reject" onclick="rejeitarSolicitacao('${sol.firebaseId}','${sol.protocolo}')">❌ Rejeitar</button>
+                            <button class="btn-cancel" onclick="cancelarSolicitacao('${sol.firebaseId}','${sol.protocolo}')">❌ Cancelar</button>
                         `;
                     }
                     html += `<button class="btn-delete" onclick="deletarSolicitacao('${sol.firebaseId}','${sol.protocolo}')">🗑️ Excluir</button>`;
                 } else if (sol.status === 'CONCLUIDO' && sol.dataConclusao) {
                     const dataConclusao = sol.dataConclusao ? new Date(sol.dataConclusao).toLocaleDateString() : '';
                     html += `<span style="font-size: 0.65rem; font-weight: 600; color: #10b981;">✓ Concluída em ${dataConclusao}</span>`;
-                } else if (sol.status === 'REJEITADO' && sol.dataRejeicao) {
-                    const dataRejeicao = sol.dataRejeicao ? new Date(sol.dataRejeicao).toLocaleDateString() : '';
-                    html += `<span style="font-size: 0.65rem; font-weight: 600; color: #ef4444;">✗ Rejeitada em ${dataRejeicao}</span>`;
+                } else if (sol.status === 'CANCELADO' && sol.dataCancelamento) {
+                    const dataCancelamento = sol.dataCancelamento ? new Date(sol.dataCancelamento).toLocaleDateString() : '';
+                    html += `<span style="font-size: 0.65rem; font-weight: 600; color: #ef4444;">✗ Cancelada em ${dataCancelamento}</span>`;
                 }
                 
                 html += `</td></tr>`;
@@ -1416,7 +1618,7 @@
                 await push(ref(db, 'activities'), {
                     userId: currentUser?.uid,
                     userEmail: currentUser?.email,
-                    action: `Criou solicitação para ${nome} - ${qtd} unidades - Solicitante: ${solicitante} - Obra: ${numeroObra}`,
+                    action: `Criou solicitação para ${nome} - ${qtd} unidades - Solicitante: ${solicitante} - Obra: ${numeroObra} - Valor: R$ ${valorObra}`,
                     timestamp: serverTimestamp()
                 });
                 
@@ -1467,7 +1669,10 @@
                 document.getElementById('userInfo').style.display = 'flex';
                 document.getElementById('userEmail').innerHTML = user.email;
                 
-                if (user.email === 'admin@admin.com' || user.email === 'adm@estoque.com') {
+                document.getElementById('filterEmailDisplay').textContent = user.email;
+                
+                const isAdmin = user.email === 'admin@admin.com' || user.email === 'adm@estoque.com' || user.email === 'admin@estoque.com';
+                if (isAdmin) {
                     document.getElementById('userEmail').innerHTML += ' <span class="admin-badge">ADMIN</span>';
                 }
                 
