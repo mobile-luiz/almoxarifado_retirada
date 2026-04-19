@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>StockManager Pro - Sistema de Solicitação de Retirada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 24px;
+            animation: slideDown 0.6s ease-out;
+            padding: 0 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 6px;
+        }
+
+        .subtitle {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .tab-btn {
+            padding: 10px 24px;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            color: #cbd5e1;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            border-color: #f59e0b;
+        }
+
+        .tab-btn:hover:not(.active) {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.4s ease-out;
+        }
+
+        .grid-2col {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        @media (min-width: 1024px) {
+            .grid-2col {
+                grid-template-columns: 1fr 1.2fr;
+                gap: 24px;
+            }
+            body {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+
+        .card {
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @media (min-width: 768px) {
+            .card {
+                padding: 32px;
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+            border-color: rgba(245, 158, 11, 0.4);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #f59e0b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 2px solid rgba(245, 158, 11, 0.3);
+            padding-bottom: 12px;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        @media (min-width: 768px) {
+            .card-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-pdf {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-excel {
+            background: linear-gradient(135deg, #10b981, #059669);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            border: none;
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #cbd5e1;
+            margin-bottom: 8px;
+        }
+
+        @media (min-width: 768px) {
+            label {
+                font-size: 0.875rem;
+            }
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: #0f172a;
+            border: 1.5px solid #334155;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: inherit;
+        }
+
+        @media (min-width: 768px) {
+            select, input, textarea {
+                padding: 14px 16px;
+                font-size: 0.95rem;
+            }
+        }
+
+        select:focus, input:focus, textarea:focus {
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+            background: #1a2335;
+        }
+
+        .btn-withdraw {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        @media (min-width: 768px) {
+            .btn-withdraw {
+                padding: 16px;
+                font-size: 1rem;
+            }
+        }
+
+        .btn-withdraw:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
+        }
+
+        .btn-withdraw:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-logout {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 100;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+        }
+
+        @media (min-width: 768px) {
+            .btn-logout {
+                top: 20px;
+                right: 20px;
+                padding: 10px 20px;
+                font-size: 0.9rem;
+            }
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 500px;
+            overflow-y: auto;
+            border-radius: 12px;
+        }
+
+        .solicitacoes-table, .relatorio-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        .solicitacoes-table thead, .relatorio-table thead {
+            position: sticky;
+            top: 0;
+            background: #1e293b;
+            z-index: 10;
+        }
+
+        .solicitacoes-table th, .relatorio-table th {
+            text-align: left;
+            padding: 10px 8px;
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 0.7rem;
+            border-bottom: 2px solid rgba(245, 158, 11, 0.3);
+        }
+
+        @media (min-width: 768px) {
+            .solicitacoes-table th, .relatorio-table th {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+        }
+
+        .solicitacoes-table td, .relatorio-table td {
+            padding: 10px 8px;
+            color: #cbd5e1;
+            border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+            font-size: 0.7rem;
+        }
+
+        @media (min-width: 768px) {
+            .solicitacoes-table td, .relatorio-table td {
+                padding: 12px;
+                font-size: 0.85rem;
+            }
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            white-space: nowrap;
+            text-align: center;
+            min-width: 100px;
+        }
+
+        @media (min-width: 768px) {
+            .status {
+                padding: 6px 14px;
+                font-size: 0.8rem;
+                min-width: 110px;
+            }
+        }
+
+        .status-pendente {
+            background: rgba(245, 158, 11, 0.25);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.5);
+        }
+
+        .status-concluido {
+            background: rgba(16, 185, 129, 0.25);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.5);
+        }
+
+        .status-cancelado {
+            background: rgba(239, 68, 68, 0.25);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .btn-edit, .btn-delete, .btn-print, .btn-approve, .btn-cancel {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.65rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            white-space: nowrap;
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+        }
+
+        .btn-print {
+            background: linear-gradient(135deg, #38bdf8, #3b82f6);
+            color: white;
+        }
+
+        .info-box {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid #f59e0b;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .info-box p {
+            color: #cbd5e1;
+            font-size: 0.85rem;
+        }
+
+        .info-box strong {
+            color: #f59e0b;
+            font-size: 1.1rem;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            padding: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 14px;
+            background: rgba(30, 41, 59, 0.9);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .pagination button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            transform: translateY(-2px);
+        }
+
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: #f59e0b;
+            font-size: 0.85rem;
+            margin: 0 10px;
+            font-weight: 600;
+        }
+
+        .items-per-page {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-left: auto;
+        }
+
+        .items-per-page select {
+            width: 70px;
+            padding: 6px 8px;
+            font-size: 0.8rem;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-bar input, .filter-bar select {
+            flex: 1;
+            min-width: 150px;
+            padding: 8px 12px;
+            font-size: 0.8rem;
+        }
+
+        .user-filter-info {
+            background: rgba(245, 158, 11, 0.15);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 15px;
+            font-size: 0.8rem;
+            color: #f59e0b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .user-filter-info span {
+            font-weight: 600;
+        }
+
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            border: 1px solid rgba(245, 158, 11, 0.2);
+        }
+
+        .stat-card .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #f59e0b;
+        }
+
+        .stat-card .stat-label {
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 5px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 3000;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+        }
+
+        .modal.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 24px;
+            max-width: 500px;
+            width: 100%;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-content h3 {
+            color: #f59e0b;
+            margin-bottom: 16px;
+            font-size: 1.3rem;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-direction: column;
+        }
+
+        @media (min-width: 480px) {
+            .modal-buttons {
+                flex-direction: row;
+            }
+        }
+
+        .modal-buttons button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-cancel-modal {
+            background: #334155;
+            color: white;
+        }
+
+        .btn-save {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .user-info {
+            position: fixed;
+            top: 12px;
+            right: 95px;
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 6px 12px;
+            border-radius: 12px;
+            color: white;
+            font-size: 0.7rem;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        @media (min-width: 768px) {
+            .user-info {
+                top: 20px;
+                right: 140px;
+                padding: 8px 16px;
+                font-size: 0.9rem;
+                max-width: 250px;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            font-size: 0.85rem;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(8px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .loading.show {
+            display: flex;
+        }
+
+        .spinner {
+            width: 45px;
+            height: 45px;
+            border: 3px solid rgba(245, 158, 11, 0.3);
+            border-top-color: #f59e0b;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .auth-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 80vh;
+            padding: 16px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+        }
+
+        .admin-badge {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.6rem;
+            margin-left: 5px;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .card { padding: 16px; }
+            .card-title { font-size: 1rem; flex-direction: column; align-items: flex-start; }
+            .action-buttons { flex-direction: column; }
+            .btn-edit, .btn-delete, .btn-print, .btn-approve, .btn-cancel {
+                width: 100%;
+                justify-content: center;
+            }
+            .pagination button { padding: 6px 10px; font-size: 0.7rem; }
+            .status { font-size: 0.6rem; padding: 3px 8px; min-width: 80px; }
+            .stats-cards { grid-template-columns: 1fr 1fr; }
+            .stat-card .stat-value { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading"><div class="spinner"></div></div>
+    <div class="toast" id="toast"><span id="toastMessage"></span></div>
+
+    <div class="user-info" id="userInfo" style="display: none;">👤 <span id="userEmail"></span></div>
+    <button class="btn-logout" id="logoutBtn" style="display: none;">🚪 Sair</button>
+
+    <div class="container">
+        <div id="authSection" class="auth-content">
+            <div class="auth-container">
+                <div id="loginCard" class="card">
+                    <div class="card-title">🔐 Login - Sistema de Retirada</div>
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label>📧 E-mail</label>
+                            <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>🔒 Senha</label>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        </div>
+                        <button type="submit" class="btn-withdraw">Entrar</button>
+                    </form>
+                    <div style="text-align: center; margin-top: 16px; color: #94a3b8; font-size: 0.8rem;">
+                        Sistema de Solicitação de Retirada
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mainContent" style="display: none;">
+            <div class="header">
+                <div class="badge">📤 Sistema de Solicitações</div>
+                <h1>Solicitação de Retirada</h1>
+                <p class="subtitle">Registre e acompanhe suas solicitações de retirada de transformadores</p>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('solicitacoes')">📋 Minhas Solicitações</button>
+                <button class="tab-btn" onclick="switchTab('relatorio')">📊 Relatório de Saídas</button>
+            </div>
+
+            <!-- Aba de Solicitações -->
+            <div id="tab-solicitacoes" class="tab-content active">
+                <div class="grid-2col">
+                    <div class="card">
+                        <div class="card-title">📝 Nova Solicitação</div>
+                        <form id="formWithdraw">
+                            <div class="form-group">
+                                <label>⚡ Transformador</label>
+                                <select id="withdrawPotenciaSel" required>
+                                    <option value="" disabled selected>Selecione a potência...</option>
+                                    <option value="t10kv">Transformador 10kV</option>
+                                    <option value="t30kv">Transformador 30kV</option>
+                                    <option value="t45kv">Transformador 45kV</option>
+                                    <option value="t70kv">Transformador 70kV</option>
+                                    <option value="t12_5kv">Transformador 12.5kV</option>
+                                    <option value="t150kv">Transformador 150kV</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>🔢 Quantidade para Retirar</label>
+                                <input type="number" id="withdrawQtd" min="1" placeholder="Digite a quantidade" required>
+                            </div>
+                            <div class="form-group">
+                                <label>👤 Solicitante</label>
+                                <input type="text" id="solicitante" placeholder="Nome de quem está solicitando" required>
+                            </div>
+                            <div class="form-group">
+                                <label>🏷️ Número da Obra</label>
+                                <input type="text" id="numeroObra" placeholder="Ex: OB-2024-001" required>
+                            </div>
+                            <div class="form-group">
+                                <label>💰 Valor da Obra (R$)</label>
+                                <input type="number" id="valorObra" step="0.01" min="0" placeholder="0,00" required>
+                            </div>
+                            <div class="info-box" id="stockInfo" style="display: none;">
+                                <p>📊 <strong>Estoque atual:</strong> <span id="currentStock">0</span> unidades disponíveis</p>
+                            </div>
+                            <button type="submit" class="btn-withdraw" id="submitBtn">📤 Enviar Solicitação</button>
+                        </form>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-title">
+                            <span>📋 Minhas Solicitações</span>
+                            <div class="card-actions">
+                                <button class="btn-pdf" id="exportSolicitacoesPDFBtn">
+                                    📄 Salvar PDF
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="user-filter-info">
+                            📧 Filtrando solicitações do usuário: <span id="filterEmailDisplay"></span>
+                        </div>
+                        
+                        <div class="filter-bar">
+                            <input type="text" id="searchInput" placeholder="🔍 Buscar..." class="filter-input">
+                            <select id="statusFilter" class="filter-input">
+                                <option value="all">📊 Todos os status</option>
+                                <option value="PENDENTE">⏳ Pendentes</option>
+                                <option value="CONCLUIDO">✅ Concluídas</option>
+                                <option value="CANCELADO">❌ Canceladas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table class="solicitacoes-table" id="solicitacoesTable">
+                                <thead>
+                                    <tr><th>Protocolo</th><th>Item</th><th>Qtd</th><th>Solicitante</th><th>Nº Obra</th><th>Valor Obra</th><th>Data</th><th>Status</th><th>Ações</th></tr>
+                                </thead>
+                                <tbody id="solicitacoesList">
+                                    <tr><td colspan="9" class="empty-state">Carregando solicitações...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination" id="pagination">
+                            <button id="firstPageBtn" onclick="goToFirstPage()">⏮️ Primeira</button>
+                            <button id="prevPageBtn" onclick="goToPrevPage()">◀ Anterior</button>
+                            <span class="page-info" id="pageInfo">Página 1 de 1</span>
+                            <button id="nextPageBtn" onclick="goToNextPage()">Próxima ▶</button>
+                            <button id="lastPageBtn" onclick="goToLastPage()">Última ⏭️</button>
+                            <div class="items-per-page">
+                                <span>Itens por página:</span>
+                                <select id="itemsPerPageSelect">
+                                    <option value="5">5</option>
+                                    <option value="10" selected>10</option>
+                                    <option value="20">20</option>
+                                    <option value="50">50</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aba de Relatório de Saídas -->
+            <div id="tab-relatorio" class="tab-content">
+                <div class="card">
+                    <div class="card-title">
+                        <span>📊 Relatório de Saídas de Materiais</span>
+                        <div class="card-actions">
+                            <button class="btn-pdf" id="exportRelatorioPDFBtn">
+                                📄 Salvar PDF
+                            </button>
+                            <button class="btn-excel" id="exportRelatorioExcelBtn">
+                                📊 Exportar Excel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-cards" id="statsCards">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalSaidas">0</div>
+                            <div class="stat-label">Total de Saídas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalUnidades">0</div>
+                            <div class="stat-label">Unidades Retiradas</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalValorObras">R$ 0,00</div>
+                            <div class="stat-label">Valor Total das Obras</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalValorMateriais">R$ 0,00</div>
+                            <div class="stat-label">Valor Estimado dos Materiais</div>
+                        </div>
+                    </div>
+                    
+                    <div class="filter-bar">
+                        <input type="text" id="relatorioSearchInput" placeholder="🔍 Buscar por protocolo, produto ou obra..." class="filter-input">
+                        <input type="date" id="dataInicioFilter" class="filter-input" placeholder="Data Início">
+                        <input type="date" id="dataFimFilter" class="filter-input" placeholder="Data Fim">
+                    </div>
+                    
+                    <div class="table-container">
+                        <table class="relatorio-table" id="relatorioTable">
+                            <thead>
+                                <tr><th>Protocolo</th><th>Transformador</th><th>Qtd</th><th>Solicitante</th><th>Nº Obra</th><th>Valor da Obra</th><th>Valor Unitário</th><th>Valor Total Material</th><th>Data da Saída</th><th>Concluído Por</th></tr>
+                            </thead>
+                            <tbody id="relatorioList">
+                                <tr><td colspan="10" class="empty-state">Carregando relatório...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="pagination" id="relatorioPagination">
+                        <button id="relatorioFirstPageBtn" onclick="goToFirstPageRelatorio()">⏮️ Primeira</button>
+                        <button id="relatorioPrevPageBtn" onclick="goToPrevPageRelatorio()">◀ Anterior</button>
+                        <span class="page-info" id="relatorioPageInfo">Página 1 de 1</span>
+                        <button id="relatorioNextPageBtn" onclick="goToNextPageRelatorio()">Próxima ▶</button>
+                        <button id="relatorioLastPageBtn" onclick="goToLastPageRelatorio()">Última ⏭️</button>
+                        <div class="items-per-page">
+                            <span>Itens por página:</span>
+                            <select id="relatorioItemsPerPageSelect">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="actionModal">
+        <div class="modal-content">
+            <h3 id="modalTitle">Confirmar Ação</h3>
+            <p id="modalMessage" style="color: #cbd5e1; margin-bottom: 20px;"></p>
+            <div class="modal-buttons">
+                <button class="btn-cancel-modal" onclick="closeActionModal()">Cancelar</button>
+                <button class="btn-save" id="confirmActionBtn">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, serverTimestamp, push, get, onValue, set, remove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCwTiqQBRBBYth4wJtjhdL1VQ0LZV7PKco",
+            databaseURL: "https://almoxarifado-c2fbc-default-rtdb.firebaseio.com",
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const auth = getAuth(app);
+
+        let currentUser = null;
+        let allSolicitacoes = [];
+        let saidasConcluidas = [];
+        let currentPage = 1;
+        let currentPageRelatorio = 1;
+        let itemsPerPage = 10;
+        let itemsPerPageRelatorio = 10;
+        let currentFilter = { search: '', status: 'all' };
+        let relatorioFilter = { search: '', dataInicio: '', dataFim: '' };
+
+        // Preços unitários estimados por tipo de transformador
+        const precosUnitarios = {
+            'Transformador 10kV': 8500,
+            'Transformador 30kV': 12500,
+            'Transformador 45kV': 18900,
+            'Transformador 70kV': 28700,
+            'Transformador 12.5kV': 9800,
+            'Transformador 150kV': 45600
+        };
+
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toast');
+            const span = document.getElementById('toastMessage');
+            span.textContent = message;
+            toast.style.background = isError ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #10b981, #059669)';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function showLoading() { document.getElementById('loading').classList.add('show'); }
+        function hideLoading() { document.getElementById('loading').classList.remove('show'); }
+
+        function gerarProtocolo() {
+            const data = new Date();
+            return `RT-${data.getFullYear()}${String(data.getMonth()+1).padStart(2,'0')}${String(data.getDate()).padStart(2,'0')}-${String(data.getHours()).padStart(2,'0')}${String(data.getMinutes()).padStart(2,'0')}${String(data.getSeconds()).padStart(2,'0')}`;
+        }
+
+        const products = {
+            't10kv': { name: 'Transformador 10kV', min: 5 },
+            't30kv': { name: 'Transformador 30kV', min: 3 },
+            't45kv': { name: 'Transformador 45kV', min: 3 },
+            't70kv': { name: 'Transformador 70kV', min: 2 },
+            't12_5kv': { name: 'Transformador 12.5kV', min: 4 },
+            't150kv': { name: 'Transformador 150kV', min: 2 }
+        };
+
+        window.switchTab = function(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+            event.target.classList.add('active');
+            
+            if (tab === 'relatorio') {
+                carregarRelatorio();
+            }
+        };
+
+        async function concluirSolicitacao(solicitationId, transformadorId, quantidade, protocolo) {
+            showLoading();
+            const stockRef = ref(db, `estoque/${transformadorId}`);
+            
+            try {
+                const result = await runTransaction(stockRef, (currentStock) => {
+                    if (currentStock === null) {
+                        throw new Error('Produto não encontrado no estoque!');
+                    }
+                    const currentQtd = currentStock.quantidade || 0;
+                    if (currentQtd < quantidade) {
+                        throw new Error(`Estoque insuficiente! Disponível: ${currentQtd}, Solicitado: ${quantidade}`);
+                    }
+                    return {
+                        ...currentStock,
+                        quantidade: currentQtd - quantidade,
+                        ultimaAtualizacao: serverTimestamp(),
+                        atualizadoPor: currentUser?.email
+                    };
+                });
+                
+                if (result.committed) {
+                    await set(ref(db, `solicitacoes/${solicitationId}/status`), 'CONCLUIDO');
+                    await set(ref(db, `solicitacoes/${solicitationId}/dataConclusao`), serverTimestamp());
+                    await set(ref(db, `solicitacoes/${solicitationId}/concluidoPor`), currentUser?.email);
+                    
+                    await push(ref(db, 'activities'), {
+                        userId: currentUser?.uid,
+                        userEmail: currentUser?.email,
+                        action: `Concluiu solicitação ${protocolo} - Retirou ${quantidade}x ${products[transformadorId]?.name || transformadorId} do estoque`,
+                        timestamp: serverTimestamp()
+                    });
+                    
+                    showToast(`✅ Solicitação ${protocolo} concluída!`);
+                    return true;
+                } else {
+                    showToast(`❌ Erro ao concluir solicitação!`, true);
+                    return false;
+                }
+            } catch (error) {
+                console.error('Erro ao concluir:', error);
+                showToast(error.message || '❌ Erro ao concluir solicitação!', true);
+                return false;
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function cancelarSolicitacao(solicitationId, protocolo) {
+            showLoading();
+            try {
+                await set(ref(db, `solicitacoes/${solicitationId}/status`), 'CANCELADO');
+                await set(ref(db, `solicitacoes/${solicitationId}/dataCancelamento`), serverTimestamp());
+                await set(ref(db, `solicitacoes/${solicitationId}/canceladoPor`), currentUser?.email);
+                
+                await push(ref(db, 'activities'), {
+                    userId: currentUser?.uid,
+                    userEmail: currentUser?.email,
+                    action: `Cancelou solicitação ${protocolo}`,
+                    timestamp: serverTimestamp()
+                });
+                
+                showToast(`❌ Solicitação ${protocolo} cancelada!`);
+            } catch (error) {
+                console.error('Erro ao cancelar:', error);
+                showToast('❌ Erro ao cancelar solicitação!', true);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function deletarSolicitacao(solicitationId, protocolo) {
+            showLoading();
+            try {
+                await remove(ref(db, `solicitacoes/${solicitationId}`));
+                showToast(`✅ Solicitação ${protocolo} excluída!`);
+            } catch (error) {
+                showToast('❌ Erro ao excluir!', true);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        window.closeActionModal = function() {
+            document.getElementById('actionModal').classList.remove('show');
+        };
+
+        function openActionModal(title, message, onConfirm) {
+            document.getElementById('modalTitle').textContent = title;
+            document.getElementById('modalMessage').textContent = message;
+            document.getElementById('actionModal').classList.add('show');
+            
+            const confirmBtn = document.getElementById('confirmActionBtn');
+            const newBtn = confirmBtn.cloneNode(true);
+            confirmBtn.parentNode.replaceChild(newBtn, confirmBtn);
+            newBtn.id = 'confirmActionBtn';
+            newBtn.onclick = async () => {
+                closeActionModal();
+                await onConfirm();
+                loadSolicitacoesData();
+                updateStockDisplay();
+                carregarRelatorio();
+            };
+        }
+
+        window.concluirSolicitacao = function(id, transformadorId, quantidade, protocolo) {
+            openActionModal('Concluir Solicitação', 
+                `Confirmar conclusão da solicitação ${protocolo}?\n\n⚠️ Serão retiradas ${quantidade} unidade(s) do estoque.`,
+                () => concluirSolicitacao(id, transformadorId, quantidade, protocolo));
+        };
+
+        window.cancelarSolicitacao = function(id, protocolo) {
+            openActionModal('Cancelar Solicitação',
+                `Confirmar cancelamento da solicitação ${protocolo}?`,
+                () => cancelarSolicitacao(id, protocolo));
+        };
+
+        window.deletarSolicitacao = function(id, protocolo) {
+            openActionModal('Excluir Solicitação',
+                `Confirmar exclusão da solicitação ${protocolo}? Esta ação não pode ser desfeita.`,
+                () => deletarSolicitacao(id, protocolo));
+        };
+
+        window.printSolicitacao = function(protocolo, nome, quantidade, solicitante, numeroObra, valorObra, status) {
+            const statusText = status === 'PENDENTE' ? 'PENDENTE' : status === 'CONCLUIDO' ? 'CONCLUÍDA' : 'CANCELADA';
+            const statusClass = status === 'PENDENTE' ? 'pendente' : status === 'CONCLUIDO' ? 'concluido' : 'cancelado';
+            
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Solicitação ${protocolo}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; padding: 40px; }
+                        .header { text-align: center; border-bottom: 2px solid #f59e0b; margin-bottom: 30px; }
+                        .status { display: inline-block; padding: 6px 15px; border-radius: 20px; font-weight: bold; font-size: 14px; }
+                        .status-pendente { background: #fef3c7; color: #d97706; border: 2px solid #d97706; }
+                        .status-concluido { background: #d1fae5; color: #059669; border: 2px solid #059669; }
+                        .status-cancelado { background: #fee2e2; color: #dc2626; border: 2px solid #dc2626; }
+                        .info { margin: 20px 0; }
+                        .info p { margin: 10px 0; font-size: 14px; }
+                        .info strong { font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1>Comprovante de Solicitação</h1>
+                        <p>Protocolo: ${protocolo}</p>
+                    </div>
+                    <div class="info">
+                        <p><strong>Transformador:</strong> ${nome}</p>
+                        <p><strong>Quantidade:</strong> ${quantidade} unidade(s)</p>
+                        <p><strong>Solicitante:</strong> ${solicitante}</p>
+                        <p><strong>Número da Obra:</strong> ${numeroObra}</p>
+                        <p><strong>Valor da Obra:</strong> R$ ${parseFloat(valorObra).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
+                        <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                        <p><strong>Status:</strong> <span class="status status-${statusClass}">${statusText}</span></p>
+                    </div>
+                    <script>window.onload=function(){window.print();setTimeout(function(){window.close()},500)}<\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        };
+
+        function filterByCurrentUser(solicitacao) {
+            return solicitacao.usuarioSolicitante === currentUser?.email;
+        }
+
+        function filterSolicitacao(sol) {
+            if (!filterByCurrentUser(sol)) return false;
+            
+            const searchTerm = currentFilter.search.toLowerCase();
+            const statusMatch = currentFilter.status === 'all' || sol.status === currentFilter.status;
+            const searchMatch = searchTerm === '' || 
+                sol.protocolo?.toLowerCase().includes(searchTerm) ||
+                sol.transformadorNome?.toLowerCase().includes(searchTerm) ||
+                sol.solicitante?.toLowerCase().includes(searchTerm) ||
+                sol.numeroObra?.toLowerCase().includes(searchTerm);
+            return statusMatch && searchMatch;
+        }
+
+        function filterRelatorio(sol) {
+            const searchTerm = relatorioFilter.search.toLowerCase();
+            const searchMatch = searchTerm === '' || 
+                sol.protocolo?.toLowerCase().includes(searchTerm) ||
+                sol.transformadorNome?.toLowerCase().includes(searchTerm) ||
+                sol.solicitante?.toLowerCase().includes(searchTerm) ||
+                sol.numeroObra?.toLowerCase().includes(searchTerm);
+            
+            let dataMatch = true;
+            if (relatorioFilter.dataInicio && sol.dataConclusao) {
+                const dataConclusao = new Date(sol.dataConclusao);
+                const dataInicio = new Date(relatorioFilter.dataInicio);
+                if (dataConclusao < dataInicio) dataMatch = false;
+            }
+            if (relatorioFilter.dataFim && sol.dataConclusao) {
+                const dataConclusao = new Date(sol.dataConclusao);
+                const dataFim = new Date(relatorioFilter.dataFim);
+                dataFim.setHours(23, 59, 59);
+                if (dataConclusao > dataFim) dataMatch = false;
+            }
+            
+            return searchMatch && dataMatch;
+        }
+
+        function renderTable() {
+            const filtered = allSolicitacoes.filter(s => filterSolicitacao(s));
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            const start = (currentPage - 1) * itemsPerPage;
+            const end = start + itemsPerPage;
+            const pageItems = filtered.slice(start, end);
+            
+            const tbody = document.getElementById('solicitacoesList');
+            
+            if (pageItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">📋 Nenhuma solicitação encontrada para o seu usuário</td></tr>';
+                document.getElementById('pageInfo').innerHTML = `Página 0 de 0`;
+                return;
+            }
+            
+            let html = '';
+            for (let sol of pageItems) {
+                let statusClass = '';
+                let statusText = '';
+                
+                if (sol.status === 'PENDENTE') {
+                    statusClass = 'status-pendente';
+                    statusText = '⏳ PENDENTE';
+                } else if (sol.status === 'CONCLUIDO') {
+                    statusClass = 'status-concluido';
+                    statusText = '✅ CONCLUÍDA';
+                } else if (sol.status === 'CANCELADO') {
+                    statusClass = 'status-cancelado';
+                    statusText = '❌ CANCELADA';
+                } else {
+                    statusClass = 'status-pendente';
+                    statusText = sol.status || 'DESCONHECIDO';
+                }
+                
+                const isAdmin = currentUser?.email === 'admin@admin.com' || 
+                               currentUser?.email === 'adm@estoque.com' ||
+                               currentUser?.email === 'admin@estoque.com';
+                
+                const valorFormatado = sol.valorObra ? parseFloat(sol.valorObra).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0,00';
+                
+                html += `
+                    <tr>
+                        <td style="font-family: monospace; font-weight: 600;">${sol.protocolo || 'N/A'}</td>
+                        <td>⚡ ${sol.transformadorNome || 'N/A'}</td>
+                        <td style="font-weight: 700; color: #f59e0b;">${sol.quantidadeSolicitada} un</td>
+                        <td>👤 ${sol.solicitante || 'N/A'}</td>
+                        <td>🏷️ ${sol.numeroObra || 'N/A'}</td>
+                        <td>💰 R$ ${valorFormatado}</td>
+                        <td style="font-size: 0.7rem;">📅 ${sol.dataSolicitacao ? new Date(sol.dataSolicitacao).toLocaleString('pt-BR') : 'N/A'}</td>
+                        <td><span class="status ${statusClass}">${statusText}</span></td>
+                        <td class="action-buttons">
+                            <button class="btn-print" onclick="printSolicitacao('${sol.protocolo}','${sol.transformadorNome}',${sol.quantidadeSolicitada},'${sol.solicitante}','${(sol.numeroObra || '').replace(/'/g, "\\'")}','${sol.valorObra || 0}','${sol.status}')">🖨️ Imprimir</button>
+                `;
+                
+                if (sol.status === 'PENDENTE') {
+                    if (isAdmin) {
+                        html += `
+                            <button class="btn-approve" onclick="concluirSolicitacao('${sol.firebaseId}','${sol.transformadorId}',${sol.quantidadeSolicitada},'${sol.protocolo}')">✅ Concluir</button>
+                            <button class="btn-cancel" onclick="cancelarSolicitacao('${sol.firebaseId}','${sol.protocolo}')">❌ Cancelar</button>
+                        `;
+                    }
+                    html += `<button class="btn-delete" onclick="deletarSolicitacao('${sol.firebaseId}','${sol.protocolo}')">🗑️ Excluir</button>`;
+                } else if (sol.status === 'CONCLUIDO' && sol.dataConclusao) {
+                    const dataConclusao = sol.dataConclusao ? new Date(sol.dataConclusao).toLocaleDateString() : '';
+                    html += `<span style="font-size: 0.65rem; font-weight: 600; color: #10b981;">✓ Concluída em ${dataConclusao}</span>`;
+                } else if (sol.status === 'CANCELADO' && sol.dataCancelamento) {
+                    const dataCancelamento = sol.dataCancelamento ? new Date(sol.dataCancelamento).toLocaleDateString() : '';
+                    html += `<span style="font-size: 0.65rem; font-weight: 600; color: #ef4444;">✗ Cancelada em ${dataCancelamento}</span>`;
+                }
+                
+                html += `</td></tr>`;
+            }
+            
+            tbody.innerHTML = html;
+            
+            document.getElementById('pageInfo').innerHTML = `Página ${currentPage} de ${totalPages}`;
+            document.getElementById('firstPageBtn').disabled = currentPage === 1;
+            document.getElementById('prevPageBtn').disabled = currentPage === 1;
+            document.getElementById('nextPageBtn').disabled = currentPage === totalPages;
+            document.getElementById('lastPageBtn').disabled = currentPage === totalPages;
+        }
+
+        function renderRelatorio() {
+            const filtered = saidasConcluidas.filter(s => filterRelatorio(s));
+            const totalPages = Math.ceil(filtered.length / itemsPerPageRelatorio);
+            const start = (currentPageRelatorio - 1) * itemsPerPageRelatorio;
+            const end = start + itemsPerPageRelatorio;
+            const pageItems = filtered.slice(start, end);
+            
+            // Atualizar estatísticas
+            let totalUnidades = 0;
+            let totalValorObras = 0;
+            let totalValorMateriais = 0;
+            
+            filtered.forEach(sol => {
+                totalUnidades += sol.quantidadeSolicitada;
+                if (sol.valorObra) totalValorObras += parseFloat(sol.valorObra);
+                const precoUnitario = precosUnitarios[sol.transformadorNome] || 0;
+                totalValorMateriais += precoUnitario * sol.quantidadeSolicitada;
+            });
+            
+            document.getElementById('totalSaidas').textContent = filtered.length;
+            document.getElementById('totalUnidades').textContent = totalUnidades;
+            document.getElementById('totalValorObras').textContent = `R$ ${totalValorObras.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            document.getElementById('totalValorMateriais').textContent = `R$ ${totalValorMateriais.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+            
+            const tbody = document.getElementById('relatorioList');
+            
+            if (pageItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="10" class="empty-state">📊 Nenhuma saída registrada</td></tr>';
+                document.getElementById('relatorioPageInfo').innerHTML = `Página 0 de 0`;
+                return;
+            }
+            
+            let html = '';
+            for (let sol of pageItems) {
+                const precoUnitario = precosUnitarios[sol.transformadorNome] || 0;
+                const valorTotalMaterial = precoUnitario * sol.quantidadeSolicitada;
+                const valorObraFormatado = sol.valorObra ? parseFloat(sol.valorObra).toLocaleString('pt-BR', {minimumFractionDigits: 2}) : '0,00';
+                const dataSaida = sol.dataConclusao ? new Date(sol.dataConclusao).toLocaleString('pt-BR') : 'N/A';
+                
+                html += `
+                    <tr>
+                        <td style="font-family: monospace;">${sol.protocolo || 'N/A'}</td>
+                        <td>⚡ ${sol.transformadorNome || 'N/A'}</td>
+                        <td style="font-weight: 700; color: #10b981;">${sol.quantidadeSolicitada} un</td>
+                        <td>👤 ${sol.solicitante || 'N/A'}</td>
+                        <td>🏷️ ${sol.numeroObra || 'N/A'}</td>
+                        <td>💰 R$ ${valorObraFormatado}</td>
+                        <td>📊 R$ ${precoUnitario.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td style="font-weight: 700; color: #f59e0b;">R$ ${valorTotalMaterial.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                        <td>📅 ${dataSaida}</td>
+                        <td>${sol.concluidoPor || 'N/A'}</td>
+                    </tr>
+                `;
+            }
+            
+            tbody.innerHTML = html;
+            
+            document.getElementById('relatorioPageInfo').innerHTML = `Página ${currentPageRelatorio} de ${totalPages}`;
+            document.getElementById('relatorioFirstPageBtn').disabled = currentPageRelatorio === 1;
+            document.getElementById('relatorioPrevPageBtn').disabled = currentPageRelatorio === 1;
+            document.getElementById('relatorioNextPageBtn').disabled = currentPageRelatorio === totalPages;
+            document.getElementById('relatorioLastPageBtn').disabled = currentPageRelatorio === totalPages;
+        }
+
+        window.goToFirstPage = function() { currentPage = 1; renderTable(); };
+        window.goToPrevPage = function() { if (currentPage > 1) { currentPage--; renderTable(); } };
+        window.goToNextPage = function() {
+            const filtered = allSolicitacoes.filter(s => filterSolicitacao(s));
+            const totalPages = Math.ceil(filtered.length / itemsPerPage);
+            if (currentPage < totalPages) { currentPage++; renderTable(); }
+        };
+        window.goToLastPage = function() {
+            const filtered = allSolicitacoes.filter(s => filterSolicitacao(s));
+            currentPage = Math.ceil(filtered.length / itemsPerPage);
+            if (currentPage === 0) currentPage = 1;
+            renderTable();
+        };
+
+        window.goToFirstPageRelatorio = function() { currentPageRelatorio = 1; renderRelatorio(); };
+        window.goToPrevPageRelatorio = function() { if (currentPageRelatorio > 1) { currentPageRelatorio--; renderRelatorio(); } };
+        window.goToNextPageRelatorio = function() {
+            const filtered = saidasConcluidas.filter(s => filterRelatorio(s));
+            const totalPages = Math.ceil(filtered.length / itemsPerPageRelatorio);
+            if (currentPageRelatorio < totalPages) { currentPageRelatorio++; renderRelatorio(); }
+        };
+        window.goToLastPageRelatorio = function() {
+            const filtered = saidasConcluidas.filter(s => filterRelatorio(s));
+            currentPageRelatorio = Math.ceil(filtered.length / itemsPerPageRelatorio);
+            if (currentPageRelatorio === 0) currentPageRelatorio = 1;
+            renderRelatorio();
+        };
+
+        function carregarRelatorio() {
+            const concluidas = allSolicitacoes.filter(s => s.status === 'CONCLUIDO' && filterByCurrentUser(s));
+            saidasConcluidas = concluidas.sort((a, b) => (b.dataConclusao || 0) - (a.dataConclusao || 0));
+            currentPageRelatorio = 1;
+            renderRelatorio();
+        }
+
+        function exportRelatorioExcel() {
+            const filtered = saidasConcluidas.filter(s => filterRelatorio(s));
+            
+            const data = filtered.map(sol => {
+                const precoUnitario = precosUnitarios[sol.transformadorNome] || 0;
+                return {
+                    'Protocolo': sol.protocolo || 'N/A',
+                    'Transformador': sol.transformadorNome || 'N/A',
+                    'Quantidade': sol.quantidadeSolicitada,
+                    'Solicitante': sol.solicitante || 'N/A',
+                    'Número da Obra': sol.numeroObra || 'N/A',
+                    'Valor da Obra (R$)': sol.valorObra ? parseFloat(sol.valorObra) : 0,
+                    'Valor Unitário (R$)': precoUnitario,
+                    'Valor Total Material (R$)': precoUnitario * sol.quantidadeSolicitada,
+                    'Data da Saída': sol.dataConclusao ? new Date(sol.dataConclusao).toLocaleString('pt-BR') : 'N/A',
+                    'Concluído Por': sol.concluidoPor || 'N/A'
+                };
+            });
+            
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Relatorio_Saidas');
+            XLSX.writeFile(wb, `relatorio_saidas_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`);
+            showToast('✅ Excel exportado com sucesso!');
+        }
+
+        function exportRelatorioPDF() {
+            const filtered = saidasConcluidas.filter(s => filterRelatorio(s));
+            
+            let totalUnidades = 0;
+            let totalValorObras = 0;
+            let totalValorMateriais = 0;
+            
+            filtered.forEach(sol => {
+                totalUnidades += sol.quantidadeSolicitada;
+                if (sol.valorObra) totalValorObras += parseFloat(sol.valorObra);
+                const precoUnitario = precosUnitarios[sol.transformadorNome] || 0;
+                totalValorMateriais += precoUnitario * sol.quantidadeSolicitada;
+            });
+            
+            const container = document.createElement('div');
+            container.style.cssText = 'font-family: "Helvetica", "Arial", sans-serif; padding: 30px; background: white;';
+            
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #f59e0b; padding-bottom: 20px;">
+                    <h1 style="color: #f59e0b; font-size: 28px;">📊 StockManager Pro</h1>
+                    <h2 style="color: #333; font-size: 18px;">Relatório de Saídas de Materiais</h2>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; margin-bottom: 30px; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                    <div><strong>Data de Emissão:</strong> ${new Date().toLocaleDateString('pt-BR')}</div>
+                    <div><strong>Usuário:</strong> ${currentUser?.email}</div>
+                    <div><strong>Total de Saídas:</strong> ${filtered.length}</div>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px;">
+                    <div style="background: #f8f9fa; padding: 15px; text-align: center; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${filtered.length}</div>
+                        <div style="font-size: 12px; color: #666;">Total de Saídas</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; text-align: center; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">${totalUnidades}</div>
+                        <div style="font-size: 12px; color: #666;">Unidades Retiradas</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; text-align: center; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">R$ ${totalValorObras.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                        <div style="font-size: 12px; color: #666;">Valor Total das Obras</div>
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; text-align: center; border-radius: 8px;">
+                        <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">R$ ${totalValorMateriais.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                        <div style="font-size: 12px; color: #666;">Valor dos Materiais</div>
+                    </div>
+                </div>
+            `;
+            
+            const table = document.createElement('table');
+            table.style.cssText = 'width: 100%; border-collapse: collapse;';
+            table.innerHTML = `
+                <thead>
+                    <tr style="background: #f59e0b;">
+                        <th style="padding: 10px; color: white;">Protocolo</th><th style="padding: 10px; color: white;">Transformador</th><th style="padding: 10px; color: white;">Qtd</th>
+                        <th style="padding: 10px; color: white;">Solicitante</th><th style="padding: 10px; color: white;">Nº Obra</th><th style="padding: 10px; color: white;">Valor Obra</th>
+                        <th style="padding: 10px; color: white;">Valor Unit.</th><th style="padding: 10px; color: white;">Valor Total</th><th style="padding: 10px; color: white;">Data Saída</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            `;
+            
+            const tbody = table.querySelector('tbody');
+            filtered.forEach(sol => {
+                const precoUnitario = precosUnitarios[sol.transformadorNome] || 0;
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.protocolo || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.transformadorNome || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${sol.quantidadeSolicitada}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.solicitante || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.numeroObra || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">R$ ${(sol.valorObra || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">R$ ${precoUnitario.toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd; font-weight: bold;">R$ ${(precoUnitario * sol.quantidadeSolicitada).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.dataConclusao ? new Date(sol.dataConclusao).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                `;
+            });
+            
+            container.appendChild(table);
+            
+            const footer = document.createElement('div');
+            footer.style.cssText = 'margin-top: 30px; text-align: center; padding-top: 20px; border-top: 1px solid #ddd; font-size: 10px; color: #999;';
+            footer.innerHTML = '<p>Sistema de Gestão de Estoque - StockManager Pro</p>';
+            container.appendChild(footer);
+            
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `relatorio_saidas_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+            
+            showLoading();
+            html2pdf().set(opt).from(container).save().then(() => {
+                hideLoading();
+                showToast('✅ PDF gerado com sucesso!');
+            }).catch(err => {
+                hideLoading();
+                showToast('❌ Erro ao gerar PDF!', true);
+            });
+        }
+
+        function exportSolicitacoesPDF() {
+            const filtered = allSolicitacoes.filter(s => filterSolicitacao(s));
+            
+            const container = document.createElement('div');
+            container.style.cssText = 'font-family: "Helvetica", "Arial", sans-serif; padding: 30px; background: white;';
+            
+            container.innerHTML = `
+                <div style="text-align: center; margin-bottom: 30px; border-bottom: 3px solid #f59e0b; padding-bottom: 20px;">
+                    <h1 style="color: #f59e0b; font-size: 28px;">📋 StockManager Pro</h1>
+                    <h2 style="color: #333; font-size: 18px;">Minhas Solicitações</h2>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Usuário:</strong> ${currentUser?.email}</p>
+                    <p><strong>Data de Emissão:</strong> ${new Date().toLocaleString('pt-BR')}</p>
+                    <p><strong>Total de Solicitações:</strong> ${filtered.length}</p>
+                </div>
+            `;
+            
+            const table = document.createElement('table');
+            table.style.cssText = 'width: 100%; border-collapse: collapse;';
+            table.innerHTML = `
+                <thead><tr style="background: #f59e0b;">
+                    <th style="padding: 10px; color: white;">Protocolo</th><th style="padding: 10px; color: white;">Item</th>
+                    <th style="padding: 10px; color: white;">Qtd</th><th style="padding: 10px; color: white;">Solicitante</th>
+                    <th style="padding: 10px; color: white;">Nº Obra</th><th style="padding: 10px; color: white;">Valor Obra</th>
+                    <th style="padding: 10px; color: white;">Data</th><th style="padding: 10px; color: white;">Status</th>
+                </tr></thead><tbody></tbody>
+            `;
+            
+            const tbody = table.querySelector('tbody');
+            filtered.forEach(sol => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.protocolo || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.transformadorNome || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.quantidadeSolicitada}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.solicitante || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.numeroObra || 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">R$ ${(sol.valorObra || 0).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.dataSolicitacao ? new Date(sol.dataSolicitacao).toLocaleDateString('pt-BR') : 'N/A'}</td>
+                    <td style="padding: 8px; border: 1px solid #ddd;">${sol.status === 'PENDENTE' ? 'PENDENTE' : sol.status === 'CONCLUIDO' ? 'CONCLUÍDA' : 'CANCELADA'}</td>
+                `;
+            });
+            
+            container.appendChild(table);
+            
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `minhas_solicitacoes_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+            
+            showLoading();
+            html2pdf().set(opt).from(container).save().then(() => {
+                hideLoading();
+                showToast('✅ PDF gerado com sucesso!');
+            }).catch(err => {
+                hideLoading();
+                showToast('❌ Erro ao gerar PDF!', true);
+            });
+        }
+
+        function loadSolicitacoesData() {
+            onValue(ref(db, 'solicitacoes'), (snapshot) => {
+                const solicitacoes = snapshot.val();
+                if (!solicitacoes) {
+                    allSolicitacoes = [];
+                    saidasConcluidas = [];
+                    renderTable();
+                    renderRelatorio();
+                    return;
+                }
+                
+                allSolicitacoes = Object.entries(solicitacoes).map(([id, sol]) => ({
+                    ...sol,
+                    firebaseId: id
+                })).sort((a, b) => (b.dataSolicitacao || 0) - (a.dataSolicitacao || 0));
+                
+                currentPage = 1;
+                renderTable();
+                carregarRelatorio();
+            });
+        }
+
+        function setupFilters() {
+            const searchInput = document.getElementById('searchInput');
+            const statusFilter = document.getElementById('statusFilter');
+            const itemsPerPageSelect = document.getElementById('itemsPerPageSelect');
+            
+            searchInput?.addEventListener('input', (e) => {
+                currentFilter.search = e.target.value;
+                currentPage = 1;
+                renderTable();
+            });
+            
+            statusFilter?.addEventListener('change', (e) => {
+                currentFilter.status = e.target.value;
+                currentPage = 1;
+                renderTable();
+            });
+            
+            itemsPerPageSelect?.addEventListener('change', (e) => {
+                itemsPerPage = parseInt(e.target.value);
+                currentPage = 1;
+                renderTable();
+            });
+            
+            const relatorioSearch = document.getElementById('relatorioSearchInput');
+            const dataInicio = document.getElementById('dataInicioFilter');
+            const dataFim = document.getElementById('dataFimFilter');
+            const relatorioItemsPerPage = document.getElementById('relatorioItemsPerPageSelect');
+            
+            relatorioSearch?.addEventListener('input', (e) => {
+                relatorioFilter.search = e.target.value;
+                currentPageRelatorio = 1;
+                renderRelatorio();
+            });
+            
+            dataInicio?.addEventListener('change', (e) => {
+                relatorioFilter.dataInicio = e.target.value;
+                currentPageRelatorio = 1;
+                renderRelatorio();
+            });
+            
+            dataFim?.addEventListener('change', (e) => {
+                relatorioFilter.dataFim = e.target.value;
+                currentPageRelatorio = 1;
+                renderRelatorio();
+            });
+            
+            relatorioItemsPerPage?.addEventListener('change', (e) => {
+                itemsPerPageRelatorio = parseInt(e.target.value);
+                currentPageRelatorio = 1;
+                renderRelatorio();
+            });
+        }
+
+        async function updateStockDisplay() {
+            const select = document.getElementById('withdrawPotenciaSel');
+            if (select && select.value) {
+                const snap = await get(ref(db, `estoque/${select.value}`));
+                const qtd = snap.val()?.quantidade || 0;
+                document.getElementById('stockInfo').style.display = 'block';
+                document.getElementById('currentStock').innerHTML = qtd;
+                document.getElementById('currentStock').style.color = qtd > 0 ? '#f59e0b' : '#ef4444';
+                
+                const submitBtn = document.getElementById('submitBtn');
+                if (qtd === 0) {
+                    submitBtn.disabled = true;
+                    submitBtn.title = 'Estoque insuficiente';
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.title = '';
+                }
+            } else {
+                document.getElementById('stockInfo').style.display = 'none';
+            }
+        }
+
+        document.getElementById('withdrawPotenciaSel')?.addEventListener('change', updateStockDisplay);
+        document.getElementById('exportRelatorioPDFBtn')?.addEventListener('click', exportRelatorioPDF);
+        document.getElementById('exportRelatorioExcelBtn')?.addEventListener('click', exportRelatorioExcel);
+        document.getElementById('exportSolicitacoesPDFBtn')?.addEventListener('click', exportSolicitacoesPDF);
+
+        document.getElementById('formWithdraw')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const sel = document.getElementById('withdrawPotenciaSel');
+            const id = sel.value;
+            const nome = sel.options[sel.selectedIndex]?.text.replace('⚡ ', '');
+            const qtd = parseInt(document.getElementById('withdrawQtd').value);
+            const solicitante = document.getElementById('solicitante').value;
+            const numeroObra = document.getElementById('numeroObra').value;
+            const valorObra = parseFloat(document.getElementById('valorObra').value);
+            
+            if (!id || !qtd || qtd < 1 || !solicitante || !numeroObra || isNaN(valorObra)) {
+                showToast('❌ Preencha todos os campos corretamente!', true);
+                return;
+            }
+            
+            showLoading();
+            try {
+                const stockSnap = await get(ref(db, `estoque/${id}`));
+                const currentStock = stockSnap.val()?.quantidade || 0;
+                
+                if (qtd > currentStock) {
+                    showToast(`❌ Estoque insuficiente! Disponível: ${currentStock} unidades`, true);
+                    hideLoading();
+                    return;
+                }
+                
+                await push(ref(db, 'solicitacoes'), {
+                    protocolo: gerarProtocolo(),
+                    transformadorId: id,
+                    transformadorNome: nome,
+                    quantidadeSolicitada: qtd,
+                    solicitante: solicitante,
+                    numeroObra: numeroObra,
+                    valorObra: valorObra,
+                    status: 'PENDENTE',
+                    dataSolicitacao: serverTimestamp(),
+                    usuarioSolicitante: currentUser?.email
+                });
+                
+                showToast('✅ Solicitação enviada com sucesso!');
+                e.target.reset();
+                document.getElementById('stockInfo').style.display = 'none';
+                document.getElementById('submitBtn').disabled = false;
+                
+            } catch (err) {
+                console.error(err);
+                showToast('❌ Erro ao enviar solicitação!', true);
+            } finally {
+                hideLoading();
+            }
+        });
+
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading();
+            try {
+                await signInWithEmailAndPassword(auth, document.getElementById('loginEmail').value, document.getElementById('loginPassword').value);
+                showToast('✅ Login realizado!');
+            } catch (err) {
+                showToast('❌ Email ou senha inválidos!', true);
+            } finally {
+                hideLoading();
+            }
+        });
+
+        document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+            showLoading();
+            try {
+                await signOut(auth);
+                showToast('✅ Logout realizado!');
+            } catch (err) {
+                showToast('❌ Erro ao sair!', true);
+            } finally {
+                hideLoading();
+            }
+        });
+
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            if (user) {
+                document.getElementById('authSection').style.display = 'none';
+                document.getElementById('mainContent').style.display = 'block';
+                document.getElementById('logoutBtn').style.display = 'flex';
+                document.getElementById('userInfo').style.display = 'flex';
+                document.getElementById('userEmail').innerHTML = user.email;
+                document.getElementById('filterEmailDisplay').textContent = user.email;
+                
+                const isAdmin = user.email === 'admin@admin.com' || user.email === 'adm@estoque.com' || user.email === 'admin@estoque.com';
+                if (isAdmin) {
+                    document.getElementById('userEmail').innerHTML += ' <span class="admin-badge">ADMIN</span>';
+                }
+                
+                loadSolicitacoesData();
+                setupFilters();
+                updateStockDisplay();
+            } else {
+                document.getElementById('authSection').style.display = 'flex';
+                document.getElementById('mainContent').style.display = 'none';
+                document.getElementById('logoutBtn').style.display = 'none';
+                document.getElementById('userInfo').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
