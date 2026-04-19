@@ -207,11 +207,6 @@
             background: #1a2335;
         }
 
-        textarea {
-            resize: vertical;
-            min-height: 80px;
-        }
-
         .btn-withdraw {
             width: 100%;
             padding: 14px;
@@ -284,7 +279,7 @@
         .solicitacoes-table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            min-width: 700px;
         }
 
         .solicitacoes-table thead {
@@ -324,7 +319,6 @@
             }
         }
 
-        /* Status com cores mais visíveis e em negrito */
         .status {
             display: inline-block;
             padding: 4px 12px;
@@ -676,7 +670,6 @@
             margin-left: 5px;
         }
 
-        /* Estilos específicos para impressão e PDF */
         @media print {
             body {
                 background: white;
@@ -814,8 +807,12 @@
                             <input type="text" id="solicitante" placeholder="Nome de quem está solicitando" required>
                         </div>
                         <div class="form-group">
-                            <label>📝 Justificativa / Observação</label>
-                            <textarea id="observacao" placeholder="Motivo da retirada, destino, etc..." required></textarea>
+                            <label>🏷️ Número da Obra</label>
+                            <input type="text" id="numeroObra" placeholder="Ex: OB-2024-001" required>
+                        </div>
+                        <div class="form-group">
+                            <label>💰 Valor da Obra (R$)</label>
+                            <input type="number" id="valorObra" step="0.01" min="0" placeholder="0,00" required>
                         </div>
                         <div class="info-box" id="stockInfo" style="display: none;">
                             <p>📊 <strong>Estoque atual:</strong> <span id="currentStock">0</span> unidades disponíveis</p>
@@ -847,10 +844,10 @@
                     <div class="table-container" id="tableContainer">
                         <table class="solicitacoes-table" id="solicitacoesTable">
                             <thead>
-                                <tr><th>Protocolo</th><th>Item</th><th>Qtd</th><th>Solicitante</th><th>Data</th><th>Status</th><th>Ações</th></tr>
+                                <tr><th>Protocolo</th><th>Item</th><th>Qtd</th><th>Solicitante</th><th>Nº Obra</th><th>Valor Obra</th><th>Data</th><th>Status</th><th>Ações</th></tr>
                             </thead>
                             <tbody id="solicitacoesList">
-                                <tr><td colspan="7" class="empty-state">Carregando solicitações...</td></tr>
+                                <tr><td colspan="9" class="empty-state">Carregando solicitações...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1057,7 +1054,7 @@
                 () => deletarSolicitacao(id, protocolo));
         };
 
-        window.printSolicitacao = function(protocolo, nome, quantidade, solicitante, observacao, status) {
+        window.printSolicitacao = function(protocolo, nome, quantidade, solicitante, numeroObra, valorObra, status) {
             const statusText = status === 'PENDENTE' ? 'PENDENTE' : status === 'CONCLUIDO' ? 'CONCLUÍDA' : 'REJEITADA';
             const statusClass = status === 'PENDENTE' ? 'pendente' : status === 'CONCLUIDO' ? 'concluido' : 'rejeitado';
             
@@ -1088,9 +1085,10 @@
                         <p><strong>Transformador:</strong> ${nome}</p>
                         <p><strong>Quantidade:</strong> ${quantidade} unidade(s)</p>
                         <p><strong>Solicitante:</strong> ${solicitante}</p>
+                        <p><strong>Número da Obra:</strong> ${numeroObra}</p>
+                        <p><strong>Valor da Obra:</strong> R$ ${parseFloat(valorObra).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</p>
                         <p><strong>Data:</strong> ${new Date().toLocaleString('pt-BR')}</p>
                         <p><strong>Status:</strong> <span class="status status-${statusClass}">${statusText}</span></p>
-                        <p><strong>Justificativa:</strong> ${observacao}</p>
                     </div>
                     <script>window.onload=function(){window.print();setTimeout(function(){window.close()},500)}<\/script>
                 </body>
@@ -1099,16 +1097,13 @@
             printWindow.document.close();
         };
 
-        // Função para salvar em PDF
         window.exportToPDF = function() {
             const element = document.getElementById('solicitacoesTable').cloneNode(true);
             
-            // Criar um container para o PDF
             const container = document.createElement('div');
             container.style.padding = '20px';
             container.style.fontFamily = 'Arial, sans-serif';
             
-            // Adicionar cabeçalho
             const header = document.createElement('div');
             header.style.textAlign = 'center';
             header.style.marginBottom = '30px';
@@ -1123,7 +1118,6 @@
                 <hr>
             `;
             
-            // Adicionar rodapé
             const footer = document.createElement('div');
             footer.style.textAlign = 'center';
             footer.style.marginTop = '30px';
@@ -1133,11 +1127,9 @@
             footer.style.color = '#666';
             footer.innerHTML = '<p>Sistema de Gestão de Estoque - StockManager Pro</p>';
             
-            // Aplicar estilos à tabela clonada
             element.style.width = '100%';
             element.style.borderCollapse = 'collapse';
             
-            // Estilizar cabeçalho da tabela
             const ths = element.querySelectorAll('th');
             ths.forEach(th => {
                 th.style.backgroundColor = '#f59e0b';
@@ -1148,7 +1140,6 @@
                 th.style.border = '1px solid #ddd';
             });
             
-            // Estilizar células da tabela
             const tds = element.querySelectorAll('td');
             tds.forEach(td => {
                 td.style.padding = '8px';
@@ -1156,7 +1147,6 @@
                 td.style.color = '#333';
             });
             
-            // Estilizar status com cores fortes
             const statusElements = element.querySelectorAll('.status');
             statusElements.forEach(el => {
                 el.style.display = 'inline-block';
@@ -1212,7 +1202,8 @@
             const searchMatch = searchTerm === '' || 
                 sol.protocolo?.toLowerCase().includes(searchTerm) ||
                 sol.transformadorNome?.toLowerCase().includes(searchTerm) ||
-                sol.solicitante?.toLowerCase().includes(searchTerm);
+                sol.solicitante?.toLowerCase().includes(searchTerm) ||
+                sol.numeroObra?.toLowerCase().includes(searchTerm);
             return statusMatch && searchMatch;
         }
 
@@ -1226,7 +1217,7 @@
             const tbody = document.getElementById('solicitacoesList');
             
             if (pageItems.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="empty-state">📋 Nenhuma solicitação encontrada</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="empty-state">📋 Nenhuma solicitação encontrada</td></tr>';
                 document.getElementById('pageInfo').innerHTML = `Página 0 de 0`;
                 document.getElementById('firstPageBtn').disabled = true;
                 document.getElementById('prevPageBtn').disabled = true;
@@ -1258,16 +1249,20 @@
                                currentUser?.email === 'adm@estoque.com' ||
                                currentUser?.email === 'admin@estoque.com';
                 
+                const valorFormatado = sol.valorObra ? parseFloat(sol.valorObra).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '0,00';
+                
                 html += `
                     <tr>
                         <td style="font-family: monospace; font-weight: 600;">${sol.protocolo || 'N/A'}</td>
                         <td>⚡ ${sol.transformadorNome || 'N/A'}</td>
                         <td style="font-weight: 700; color: #f59e0b;">${sol.quantidadeSolicitada} un</td>
                         <td>👤 ${sol.solicitante || 'N/A'}</td>
+                        <td>🏷️ ${sol.numeroObra || 'N/A'}</td>
+                        <td>💰 R$ ${valorFormatado}</td>
                         <td style="font-size: 0.7rem;">📅 ${sol.dataSolicitacao ? new Date(sol.dataSolicitacao).toLocaleString('pt-BR') : 'N/A'}</td>
                         <td><span class="status ${statusClass}">${statusText}</span></td>
                         <td class="action-buttons">
-                            <button class="btn-print" onclick="printSolicitacao('${sol.protocolo}','${sol.transformadorNome}',${sol.quantidadeSolicitada},'${sol.solicitante}','${(sol.observacao || '').replace(/'/g, "\\'")}','${sol.status}')">🖨️ Imprimir</button>
+                            <button class="btn-print" onclick="printSolicitacao('${sol.protocolo}','${sol.transformadorNome}',${sol.quantidadeSolicitada},'${sol.solicitante}','${(sol.numeroObra || '').replace(/'/g, "\\'")}','${sol.valorObra || 0}','${sol.status}')">🖨️ Imprimir</button>
                 `;
                 
                 if (sol.status === 'PENDENTE') {
@@ -1386,10 +1381,11 @@
             const nome = sel.options[sel.selectedIndex]?.text.replace('⚡ ', '');
             const qtd = parseInt(document.getElementById('withdrawQtd').value);
             const solicitante = document.getElementById('solicitante').value;
-            const obs = document.getElementById('observacao').value;
+            const numeroObra = document.getElementById('numeroObra').value;
+            const valorObra = parseFloat(document.getElementById('valorObra').value);
             
-            if (!id || !qtd || qtd < 1 || !solicitante || !obs) {
-                showToast('❌ Preencha todos os campos!', true);
+            if (!id || !qtd || qtd < 1 || !solicitante || !numeroObra || isNaN(valorObra)) {
+                showToast('❌ Preencha todos os campos corretamente!', true);
                 return;
             }
             
@@ -1410,7 +1406,8 @@
                     transformadorNome: nome,
                     quantidadeSolicitada: qtd,
                     solicitante: solicitante,
-                    observacao: obs,
+                    numeroObra: numeroObra,
+                    valorObra: valorObra,
                     status: 'PENDENTE',
                     dataSolicitacao: serverTimestamp(),
                     usuarioSolicitante: currentUser?.email
@@ -1419,7 +1416,7 @@
                 await push(ref(db, 'activities'), {
                     userId: currentUser?.uid,
                     userEmail: currentUser?.email,
-                    action: `Criou solicitação para ${nome} - ${qtd} unidades - Solicitante: ${solicitante}`,
+                    action: `Criou solicitação para ${nome} - ${qtd} unidades - Solicitante: ${solicitante} - Obra: ${numeroObra}`,
                     timestamp: serverTimestamp()
                 });
                 
